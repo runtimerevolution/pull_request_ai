@@ -12,7 +12,7 @@ module PullRequestAi
       _branch = params[:branch]
       _type = params[:type]
       
-      if false
+      if true
         redirect_to pull_request_ai_confirm_path(branch: _branch, type: _type)
       else
         @error_message = "Oops! Something went wrong."
