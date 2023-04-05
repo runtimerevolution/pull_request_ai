@@ -32,5 +32,65 @@ module PullRequestAi
       end
     end
 
+    def current_changes_to(branch)
+      configured? ? changes_between(branch, current_branch) : nil
+    end
+
+    def current_trimmed_changes_to(branch)
+      if configured? 
+        diff_changes = changes_between(branch, current_branch)
+        trim_changes(diff_changes)
+      end
+    end
+
+    def changes_between(branch1, branch2)
+      diff_output = `git diff --patch #{branch1}..#{branch2}`.strip
+      diff_changes = {}
+
+      current_file = nil
+      removed = []
+      added = []
+      combined = []
+      diff_output.each_line do |line|
+        line = line.chomp
+        if line.start_with?("diff --git")
+          if current_file && current_file.end_with?(".lock") == false
+            diff_changes[current_file] = {:removed => removed, :added => added, :combined => combined}
+          end
+          current_file = line.split(" ")[-1].strip
+          current_file = current_file.start_with?("b/") ? current_file[2..-1] : current_file
+          removed = []
+          added = []
+          combined = []
+        elsif line.start_with?("--- ") || line.start_with?("+++ ")
+          next
+        elsif line.start_with?("-") && line.strip != "-"
+          removed << line
+          combined << line
+        elsif line.start_with?("+") && line.strip != "+"
+          added << line
+          combined << line
+        end
+      end
+
+      if current_file
+        diff_changes[current_file] = {:removed => removed, :added => added, :combined => combined}
+      end
+
+      diff_changes
+    end
+
+    def trim_changes(diff_changes)
+      result = ""
+      diff_changes.each { |key, value|
+        combined = value[:combined]
+        result << key + "\n"
+        combined.each { |line| 
+          result << line.sub(/([+\-])\s*/) { $1 } + "\n"
+        }
+      }
+      result
+    end
+
   end
 end
