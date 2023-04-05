@@ -1,34 +1,35 @@
 <div>
-    <h2><strong>Please confirm:</strong></h2>
+  <h2><strong>Please confirm:</strong></h2>
 
-    <% if @error_message %>
-      <p><%= @error_message %></p>
-    <% end %>
-    
-    <p><strong>Selected branch:</strong></p>
-    <p><%= @branch %></p>
-    
-    <p><strong>Selected PR type:</strong></p>
-    <p><%= @type %></p>
+  <% if @error_message %>
+    <p><%= @error_message %></p>
+  <% end %>
 
-    <%= form_with url: pull_request_ai_create_path, method: :post do |form| %>
-        <div>
-        <strong>
-            <%= form.label :description, "Generated description:" %>
-        </strong>
-        </div>
-        <div>
-            <%= form.text_area :description, value: @description %>
-        </div>
+  <p><strong>Selected branch:</strong></p>
+  <p><%= @branch %></p>
 
-        <%= form.hidden_field :branch, value: @branch %>
-        <%= form.hidden_field :type, value: @type %>
+  <p><strong>Selected PR type:</strong></p>
+  <p><%= @type %></p>
 
-        <div>
-            <%= form.submit "Create" %>
-        </div>
-    <% end %>
+  <%= form_with url: pull_request_ai_create_path, method: :post do |form| %>
+    <div>
+      <strong>
+        <%= form.label :description, "Generated description:" %>
+      </strong>
+    </div>
 
-    <%= button_to 'Back', pull_request_ai.root_path, method: :get %>
+    <div>
+      <%= form.text_area :description, value: @description %>
+    </div>
+
+    <%= form.hidden_field :branch, value: @branch %>
+    <%= form.hidden_field :type, value: @type %>
+
+    <div>
+      <%= form.submit "Create" %>
+    </div>
+  <% end %>
+
+  <%= button_to 'Back', pull_request_ai.root_path, method: :get %>
 
 </div>

@@ -1,24 +1,25 @@
 <div>
-    <h2><strong>Pull Request AI</strong></h2>
+  <h2><strong>Pull Request AI</strong></h2>
 
-    <% if @error_message %>
-      <p><%= @error_message %></p>
-    <% end %>
+  <% if @error_message %>
+    <p><%= @error_message %></p>
+  <% end %>
 
-    <%= form_with url: pull_request_ai_prepare_path, method: :post do |form| %>
-      <div>
-        <%= form.label 'Destination Branch' %>
-        <%= form.select :branch, @branches %>
-      </div>
+  <%= form_with url: pull_request_ai_prepare_path, method: :post do |form| %>
+    
+    <div>
+      <%= form.label 'Destination Branch' %>
+      <%= form.select :branch, @branches %>
+    </div>
 
-      <div>
-        <%= form.label 'Pull Request Type' %>
-        <%= form.select :type, @types %>
-      </div>
+    <div>
+      <%= form.label 'Pull Request Type' %>
+      <%= form.select :type, @types %>
+    </div>
 
-      <div>
-        <%= form.submit "Next" %>
-      </div>
-    <% end %>
+    <div>
+      <%= form.submit "Next" %>
+    </div>
+  <% end %>
 
 </div>
