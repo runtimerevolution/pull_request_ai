@@ -26,8 +26,7 @@ module PullRequestAi
     def destination_branches
       if configured?
         current = current_branch
-        head = main_head_branch
-        remote_branches.reject { |branch| branch.end_with?("/#{current}") || branch == head }
+        remote_branches.reject { |branch| branch.end_with?("/#{current}") || branch.start_with?("origin/HEAD") }
       else
         []
       end
