@@ -107,9 +107,13 @@ GEM
     nio4r (2.5.9)
     nokogiri (1.14.2-arm64-darwin)
       racc (~> 1.4)
+    nokogiri (1.14.2-x86_64-darwin)
+      racc (~> 1.4)
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
+    puma (6.2.1)
+      nio4r (~> 2.0)
     racc (1.6.2)
     rack (2.2.6.4)
     rack-test (2.1.0)
@@ -176,10 +180,12 @@ GEM
 
 PLATFORMS
   arm64-darwin-21
+  x86_64-darwin-22
 
 DEPENDENCIES
   pry
   pull_request_ai!
+  puma
   rspec-rails
   sprockets-rails
 
