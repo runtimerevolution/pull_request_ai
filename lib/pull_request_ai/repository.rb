@@ -39,13 +39,13 @@ module PullRequestAi
     def current_trimmed_changes_to(branch)
       if configured? 
         diff_changes = changes_between(branch, current_branch)
-        trim_changes(diff_changes)
+        diff_changes.inject("") { |result, changes|  result << changes.trimmed }
       end
     end
 
     def changes_between(branch1, branch2)
       diff_output = `git diff --patch #{branch1}..#{branch2}`.strip
-      diff_changes = {}
+      diff_changes = []
 
       current_file = nil
       removed = []
@@ -55,7 +55,7 @@ module PullRequestAi
         line = line.chomp
         if line.start_with?("diff --git")
           if current_file && current_file.end_with?(".lock") == false
-            diff_changes[current_file] = {:removed => removed, :added => added, :combined => combined}
+            diff_changes << PullRequestAi::Changes.new(current_file, added, removed, combined)
           end
           current_file = line.split(" ")[-1].strip
           current_file = current_file.start_with?("b/") ? current_file[2..-1] : current_file
@@ -74,22 +74,14 @@ module PullRequestAi
       end
 
       if current_file
-        diff_changes[current_file] = {:removed => removed, :added => added, :combined => combined}
+        diff_changes << PullRequestAi::Changes.new(current_file, added, removed, combined)
       end
 
       diff_changes
     end
 
-    def trim_changes(diff_changes)
-      result = ""
-      diff_changes.each { |key, value|
-        combined = value[:combined]
-        result << key + "\n"
-        combined.each { |line| 
-          result << line.sub(/([+\-])\s*/) { $1 } + "\n"
-        }
-      }
-      result
+    def open_pull_request(branch, description)
+
     end
 
   end
