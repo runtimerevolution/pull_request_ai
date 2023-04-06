@@ -12,8 +12,8 @@ module PullRequestAi
         @github_access_token = github_access_token || PullRequestAi.github_access_token
       end
 
-      def open_pull_request(branch, title, description)
-        branch = reader.current_branch.or { |error|
+      def open_pull_request(to_branch, title, description)
+        current_branch = reader.current_branch.or { |error|
           return Failure(error)
         }
         
@@ -22,7 +22,7 @@ module PullRequestAi
         }
 
         begin
-          pr = client.create_pull_request(slug.value!, branch.value!, branch, title, description)
+          pr = client.create_pull_request(slug.value!, current_branch.value!, to_branch, title, description)
           Success(pr)
         rescue Octokit::NotFound => error
           Failure(:github_not_found)
