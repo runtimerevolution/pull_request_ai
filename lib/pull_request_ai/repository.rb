@@ -48,33 +48,27 @@ module PullRequestAi
       diff_changes = []
 
       current_file = nil
-      removed = []
-      added = []
-      combined = []
+      lines = []
       diff_output.each_line do |line|
         line = line.chomp
         if line.start_with?("diff --git")
           if current_file && current_file.end_with?(".lock") == false
-            diff_changes << PullRequestAi::Changes.new(current_file, added, removed, combined)
+            diff_changes << PullRequestAi::Changes.new(current_file, lines)
           end
           current_file = line.split(" ")[-1].strip
           current_file = current_file.start_with?("b/") ? current_file[2..-1] : current_file
-          removed = []
-          added = []
-          combined = []
+          lines = []
         elsif line.start_with?("--- ") || line.start_with?("+++ ")
           next
         elsif line.start_with?("-") && line.strip != "-"
-          removed << line
-          combined << line
+          lines << line
         elsif line.start_with?("+") && line.strip != "+"
-          added << line
-          combined << line
+          lines << line
         end
       end
 
       if current_file
-        diff_changes << PullRequestAi::Changes.new(current_file, added, removed, combined)
+        diff_changes << PullRequestAi::Changes.new(current_file, lines)
       end
 
       diff_changes
