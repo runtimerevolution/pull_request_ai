@@ -36,7 +36,7 @@ module PullRequestAi
       configured? ? changes_between(branch, current_branch) : nil
     end
 
-    def current_trimmed_changes_to(branch)
+    def flatten_current_changes_to(branch)
       if configured? 
         diff_changes = changes_between(branch, current_branch)
         diff_changes.inject("") { |result, changes|  result << changes.trimmed }
