@@ -1,3 +1,6 @@
+require 'dry/monads'
+require 'git_clone_url'
+
 module PullRequestAi
   module Repo
     class Reader
@@ -15,6 +18,17 @@ module PullRequestAi
         else
           Failure(:project_not_configured)
         end
+      end
+
+      def repository_slug
+        if configured? == false
+          return Failure(:project_not_configured)
+        end
+        url = `git config --get remote.origin.url`.strip
+        regex = %r{\A/?(?<slug>.*?)(?:\.git)?\Z}
+        uri = GitCloneUrl.parse(url)
+        match = regex.match(uri.path)
+        match ? Success(match[:slug]) : Failure(:invalid_repository)
       end
 
       def remote_branches
