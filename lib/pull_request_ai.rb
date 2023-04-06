@@ -1,5 +1,7 @@
 require 'forwardable'
 require 'httparty'
+require 'octokit'
+require 'dry/monads'
 
 require 'pull_request_ai/version'
 require 'pull_request_ai/engine'
