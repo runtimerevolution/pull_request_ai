@@ -22,12 +22,18 @@ module PullRequestAi
         }
 
         begin
-          pr = client.create_pull_request(slug.value!, current_branch.value!, to_branch, title, description)
+          pr = client.create_pull_request(slug.value!, to_branch, current_branch.value!, title, description)
           Success(pr)
         rescue Octokit::NotFound => error
+          # Access token nil or remote repository doesn't exist for this user.
           Failure(:github_not_found)
         rescue Octokit::Unauthorized => error
+          # Invalid access token.
           Failure(:github_unauthorized)
+        rescue Octokit::UnprocessableEntity => error
+          # Probably the current branch is not yet pushed to server.
+          # Or the destination branch already contains the commits from current branch.
+          Failure(:github_unprocessable_entity)
         end
       end
 
