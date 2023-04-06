@@ -20,30 +20,37 @@ module PullRequestAi
         end
       end
 
-      def repository_slug
-        if configured? == false
-          return Failure(:project_not_configured)
-        end
-        url = `git config --get remote.origin.url`.strip
-        regex = %r{\A/?(?<slug>.*?)(?:\.git)?\Z}
-        uri = GitCloneUrl.parse(url)
-        match = regex.match(uri.path)
-        match ? Success(match[:slug]) : Failure(:invalid_repository)
-      end
-
-      def remote_branches
+      def remote_name
         if configured?
-          branches = `git branch --remotes --no-color`.split("\n").map(&:strip)
-          Success(branches)
+          Success(`git remote`.strip)
         else
           Failure(:project_not_configured)
         end
       end
 
+      def repository_slug
+        remote_name.bind { |name|
+          url = `git config --get remote.#{name}.url`.strip
+          regex = %r{\A/?(?<slug>.*?)(?:\.git)?\Z}
+          uri = GitCloneUrl.parse(url)
+          match = regex.match(uri.path)
+          match ? Success(match[:slug]) : Failure(:invalid_repository)
+        }
+      end
+
+      def remote_branches
+        remote_name.bind { |name|
+          branches = `git branch --remotes --no-color`.split("\n")
+          .map { _1.strip.sub(/\A#{name}\//, '') }
+          .reject(&:empty?)
+          Success(branches)
+        }
+      end
+
       def destination_branches
         current_branch.bind { |current|
           remote_branches.bind { |branches|
-            Success(branches.reject { |branch| branch.end_with?("/#{current}") || branch.start_with?("origin/HEAD") })
+            Success(branches.reject { _1.end_with?("#{current}") || _1.start_with?("HEAD") })
           }
         }
       end
