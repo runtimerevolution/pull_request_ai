@@ -40,9 +40,16 @@ module PullRequestAi
     private
 
     def set_defaults
-      @error_message = nil
-      @branches = ["main", "random", "other"]
-      @types = [['Feature', :feature], ['Hot-fix', :hotfix], ['Release', :release]]
+      @repo_reader ||= PullRequestAi::Repo::Reader.new
+      @types = [['Feature', :feature], ['Release', :release], ['HotFix', :hotfix]]
+
+      @repo_reader.destination_branches.fmap { |branches|
+        @error_message = nil
+        @branches = branches
+      }.or { |error|
+        @error_message = "Your project doesn't have a repository configured."
+        @branches = []
+      }
     end
 
     def set_state
