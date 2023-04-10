@@ -28,8 +28,7 @@ module PullRequestAi
     def create
       @description = params[:description]
       @title = params[:title]
-      repo_writer = PullRequestAi::Repo::Writer.new
-      result = repo_writer.open_pull_request(@branch, @title, @description)
+      result = repo_client.open_pull_request(@branch, @title, @description)
       result.or { |error|
         @error_message = error.to_s.empty? ? "Oops! Something went wrong." : error.to_s
         render :confirm
@@ -44,11 +43,14 @@ module PullRequestAi
 
     private
 
+    def repo_client
+      @repo_client ||= PullRequestAi::Repo::Client.new
+    end
+
     def set_defaults
-      @repo_reader ||= PullRequestAi::Repo::Reader.new
       @types = [['Feature', :feature], ['Release', :release], ['HotFix', :hotfix]]
 
-      @repo_reader.destination_branches.fmap { |branches|
+      repo_client.destination_branches.fmap { |branches|
         @error_message = nil
         @branches = branches
       }.or { |error|
