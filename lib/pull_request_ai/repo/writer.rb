@@ -14,7 +14,7 @@ module PullRequestAi
         github_access_token: nil
       )
         @github_api_endpoint = github_api_endpoint || PullRequestAi.github_api_endpoint
-        @github_access_token = github_access_token #|| PullRequestAi.github_access_token
+        @github_access_token = github_access_token || PullRequestAi.github_access_token
       end
 
       def open_pull_request(to_branch, title, description)
