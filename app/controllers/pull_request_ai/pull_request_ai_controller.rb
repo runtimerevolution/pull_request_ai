@@ -21,7 +21,6 @@ module PullRequestAi
     end
 
     def confirm
-      binding.pry
       @description = "This will be the result of the AI response."
     end
 
