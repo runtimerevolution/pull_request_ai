@@ -23,6 +23,9 @@ Gem::Specification.new do |spec|
   end
 
   spec.add_dependency 'rails', '>= 7.0.4.3'
+  spec.add_dependency 'httparty'
+  spec.add_dependency 'dry-monads'
+  spec.add_dependency 'octokit'
 
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rspec-rails'
