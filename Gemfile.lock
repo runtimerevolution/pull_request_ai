@@ -5,6 +5,7 @@ PATH
       dry-monads
       httparty
       octokit
+      rack-attack
       rails (>= 7.0.4.3)
 
 GEM
@@ -216,7 +217,6 @@ DEPENDENCIES
   pry
   pull_request_ai!
   puma
-  rack-attack
   rspec-rails
   sprockets-rails
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module PullRequestAi
-  module Http
+  module OpenAi
     # A client to access the OpenAI API.
     class Client
       attr_accessor :openai_api_key, :open_ai_uri, :api_version, :model, :temperature
@@ -26,14 +26,13 @@ module PullRequestAi
       # Makes a request to the OpenAI API
       # Authentication information is automatically added
       def request(content: '')
-        response = HTTParty.send(
-          :post,
+        response = HTTParty.post(
           build_uri,
           headers: headers,
           body: body(content),
         )
 
-        response.parsed_response
+        response
       end
 
       private
