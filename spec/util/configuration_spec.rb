@@ -30,6 +30,11 @@ RSpec.describe PullRequestAi::Util::Configuration do
     expect(config.open_ai_uri).to eq 'https://api.openai.com'
   end
 
+  it 'should have a fixed github_api_endpoint attribute' do
+    config = described_class.new
+    expect(config.github_api_endpoint).to eq 'https://api.github.com'
+  end
+
   it 'should have a fixed api_version attribute' do
     config = described_class.new
     expect(config.api_version).to eq 'v1'
