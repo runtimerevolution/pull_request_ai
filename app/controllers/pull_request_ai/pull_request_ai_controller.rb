@@ -9,11 +9,11 @@ module PullRequestAi
     end
 
     def prepare
-      _branch = params[:branch]
-      _type = params[:type]
+      branch = params[:branch]
+      type = params[:type]
       
       if true
-        redirect_to pull_request_ai_confirm_path(branch: _branch, type: _type)
+        redirect_to pull_request_ai_confirm_path(branch: branch, type: type)
       else
         @error_message = "Oops! Something went wrong."
         render :index
