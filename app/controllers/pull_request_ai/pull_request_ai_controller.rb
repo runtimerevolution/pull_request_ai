@@ -21,17 +21,22 @@ module PullRequestAi
     end
 
     def confirm
+      @title = @type.to_s.capitalize + ' '
       @description = "This will be the result of the AI response."
     end
 
     def create
       @description = params[:description]
-      if true
-        redirect_to pull_request_ai_result_path(branch: @branch, type: @type)
-      else
-        @error_message = "Oops! Something went wrong."
+      @title = params[:title]
+      repo_writer = PullRequestAi::Repo::Writer.new
+      result = repo_writer.open_pull_request(@branch, @title, @description)
+      result.or { |error|
+        @error_message = error.to_s.empty? ? "Oops! Something went wrong." : error.to_s
         render :confirm
-      end
+        return 
+      }
+
+      redirect_to pull_request_ai_result_path(branch: @branch, type: @type)
     end
 
     def result

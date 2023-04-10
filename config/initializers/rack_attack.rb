@@ -3,7 +3,8 @@ class Rack::Attack
   LIMIT_PERIOD = 20.seconds
 
   PROTECTED_ACTIONS = [
-    { controller: 'pull_request_ai/pull_request_ai', action: 'confirm' }
+    { controller: 'pull_request_ai/pull_request_ai', action: 'confirm' },
+    { controller: 'pull_request_ai/pull_request_ai', action: 'create' }
   ]
 
   def self.protected_route?(path, method)
