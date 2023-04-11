@@ -29,7 +29,7 @@ module PullRequestAi
         HTTParty.post(
           build_uri,
           headers: headers,
-          body: body(content),
+          body: body(content)
         )
       end
 
@@ -42,7 +42,7 @@ module PullRequestAi
       def headers
         {
           'Content-Type' => 'application/json',
-          'Authorization' => "Bearer #{openai_api_key}"
+          'Authorization' => "Bearer #{openai_api_key}",
         }
       end
 

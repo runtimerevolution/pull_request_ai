@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'lib/pull_request_ai/version'
 
 Gem::Specification.new do |spec|
@@ -22,12 +24,15 @@ Gem::Specification.new do |spec|
     Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   end
 
-  spec.add_dependency 'rails', '>= 7.0.4.3'
-  spec.add_dependency 'httparty'
-  spec.add_dependency 'dry-monads'
-  spec.add_dependency 'rack-attack'
-  spec.add_dependency 'git_clone_url'
+  spec.add_dependency('dry-monads')
+  spec.add_dependency('git_clone_url')
+  spec.add_dependency('httparty')
+  spec.add_dependency('rack-attack')
+  spec.add_dependency('rails', '>= 7.0.4.3')
 
-  spec.add_development_dependency 'pry'
-  spec.add_development_dependency 'rspec-rails'
+  spec.add_development_dependency('pry')
+  spec.add_development_dependency('rspec-rails')
+  spec.add_development_dependency('rubocop')
+  spec.add_development_dependency('rubocop-rspec')
+  spec.add_development_dependency('rubocop-shopify')
 end

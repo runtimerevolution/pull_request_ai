@@ -15,7 +15,7 @@ module PullRequestAi
       def chat!
         response = PullRequestAi::OpenAi::Client.new.request(content: chat_message)
 
-        build_response_object response
+        build_response_object(response)
       end
 
       private
