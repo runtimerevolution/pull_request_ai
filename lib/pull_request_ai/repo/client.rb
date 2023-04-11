@@ -3,34 +3,34 @@ require 'git_clone_url'
 
 module PullRequestAi
   module Repo
-    class Reader
+    class Client
       include Dry::Monads[:result, :do]
 
-      def configured?
-        `git rev-parse --is-inside-work-tree > /dev/null 2>&1`
-        $?.exitstatus == 0
+      attr_accessor :prompt
+      attr_accessor :github_api_endpoint
+      attr_accessor :github_access_token
+
+      def initialize(
+        github_api_endpoint: nil,
+        github_access_token: nil,
+        prompt: Prompt.new
+      )
+        @github_api_endpoint = github_api_endpoint || PullRequestAi.github_api_endpoint
+        @github_access_token = github_access_token || PullRequestAi.github_access_token
+        @prompt = prompt
       end
 
       def current_branch
-        if configured?
-          name = `git rev-parse --abbrev-ref HEAD`.chomp
-          Success(name == "HEAD" ? `git rev-parse --short HEAD`.chomp : name)
-        else
-          Failure(:project_not_configured)
-        end
+        prompt.configured? ? Success(prompt.current_branch) : Failure(:project_not_configured)
       end
 
       def remote_name
-        if configured?
-          Success(`git remote`.strip)
-        else
-          Failure(:project_not_configured)
-        end
+        prompt.configured? ? Success(prompt.remote_name) : Failure(:project_not_configured)
       end
 
       def repository_slug
         remote_name.bind { |name|
-          url = `git config --get remote.#{name}.url`.strip
+          url = prompt.remote_url(name)
           regex = %r{\A/?(?<slug>.*?)(?:\.git)?\Z}
           uri = GitCloneUrl.parse(url)
           match = regex.match(uri.path)
@@ -40,7 +40,7 @@ module PullRequestAi
 
       def remote_branches
         remote_name.bind { |name|
-          branches = `git branch --remotes --no-color`.split("\n")
+          branches = prompt.remote_branches
           .map { _1.strip.sub(/\A#{name}\//, '') }
           .reject(&:empty?)
           Success(branches)
@@ -57,7 +57,7 @@ module PullRequestAi
 
       def current_changes_to(branch)
         current_branch.bind { |current|
-          Success(changes_between(branch, current))
+          Success(prompt.changes_between(branch, current))
         }
       end
 
@@ -66,11 +66,9 @@ module PullRequestAi
           Success(changes.inject("") { |result, file|  result << file.trimmed_modified_lines })
         }
       end
-  
-      private 
 
       def changes_between(branch1, branch2)
-        diff_output = `git diff --patch #{branch1}..#{branch2}`.strip
+        diff_output = prompt.changes_between(branch1, branch2)
         changes = []
   
         file_name = nil
@@ -98,6 +96,55 @@ module PullRequestAi
         end
   
         changes
+      end
+
+      def open_pull_request(to_branch, title, description)
+        head = current_branch.or { |error|
+          return Failure(error)
+        }
+        
+        slug = repository_slug.or { |error|
+          return Failure(error)  
+        }
+
+        content = {
+          title: title,
+          body: description,
+          head: head.value!,
+          base: to_branch
+        }.to_json
+
+        request(slug.value!, content)
+      end
+
+      private 
+
+      def request(slug, content)
+        response = HTTParty.send(
+          :post,
+          build_uri(slug),
+          headers: headers,
+          body: content,
+        )
+
+        # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#create-a-pull-request
+        if response.code.to_i == 201
+          Success(response.parsed_response)
+        else 
+          errors = response.parsed_response['errors']&.map { |error| error['message'] }&.join(' ')
+          errors.to_s.empty? ? Failure(:failed_on_github_api_endpoint) : Failure(errors)
+        end
+      end
+
+      def build_uri(slug)
+        "#{github_api_endpoint}/repos/#{slug}/pulls"
+      end
+
+      def headers
+        {
+          'Accept' => 'application/vnd.github+json',
+          'Authorization' => "Bearer #{github_access_token}"
+        }
       end
 
     end
