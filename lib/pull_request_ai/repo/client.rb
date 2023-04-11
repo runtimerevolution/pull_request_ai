@@ -1,6 +1,3 @@
-require 'dry/monads'
-require 'git_clone_url'
-
 module PullRequestAi
   module Repo
     class Client

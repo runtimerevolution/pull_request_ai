@@ -3,7 +3,6 @@ require 'rails_helper'
 RSpec.describe PullRequestAi::Http::Client do
   let(:fake_http_response) { instance_double(HTTParty::Response) }
 
-  let(:github_access_token) { 'someGithubAccessToken'}
   let(:openai_api_key) { 'someApiKey'}
   let(:model) { 'someModel' }
   let(:temperature) { 'someTemperature' }
@@ -11,7 +10,6 @@ RSpec.describe PullRequestAi::Http::Client do
   let(:client) { described_class.new }
   let(:configuration) do
     PullRequestAi.configure do |config|
-      config.github_access_token = github_access_token
       config.openai_api_key = openai_api_key
       config.model = model
       config.temperature = temperature
@@ -24,17 +22,6 @@ RSpec.describe PullRequestAi::Http::Client do
 
   it 'can be initialized' do
     expect { PullRequestAi::Http::Client }.not_to raise_error
-  end
-
-  describe '::github_access_token' do
-    it 'should initialize with the configured github_access_token' do
-      expect(client.github_access_token).to eq github_access_token
-    end
-
-    it 'accepts github_access_token as argument' do
-      klass = described_class.new(github_access_token: 'Github Token')
-      expect(klass.github_access_token).to eq 'Github Token'
-    end
   end
 
   describe '::openai_api_key' do

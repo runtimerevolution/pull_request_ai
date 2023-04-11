@@ -3,12 +3,12 @@
 module PullRequestAi
   module Util
     class Configuration
+      attr_accessor :github_api_endpoint
       attr_accessor :github_access_token
       attr_accessor :openai_api_key
       attr_accessor :model
       attr_accessor :temperature
 
-      attr_reader :github_api_endpoint
       attr_reader :open_ai_uri
       attr_reader :api_version
 
