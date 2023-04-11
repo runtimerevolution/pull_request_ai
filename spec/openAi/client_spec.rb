@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe PullRequestAi::Http::Client do
+RSpec.describe PullRequestAi::OpenAi::Client do
   let(:fake_http_response) { instance_double(HTTParty::Response) }
 
   let(:openai_api_key) { 'someApiKey'}
@@ -21,7 +21,7 @@ RSpec.describe PullRequestAi::Http::Client do
   end
 
   it 'can be initialized' do
-    expect { PullRequestAi::Http::Client }.not_to raise_error
+    expect { PullRequestAi::OpenAi::Client }.not_to raise_error
   end
 
   describe '::openai_api_key' do
@@ -59,14 +59,11 @@ RSpec.describe PullRequestAi::Http::Client do
 
   describe '.request' do
     before do
-      allow(HTTParty).to receive(:send).and_return(fake_http_response)
-      allow(fake_http_response).to receive(:parsed_response).and_return(
-        double('response', status: 200, body: {}, headers: {})
-      )
+      allow(HTTParty).to receive(:post).and_return(fake_http_response)
     end
 
     it 'sends user content to httparty request' do
-      expect(HTTParty).to receive(:send).with(:post, any_args)
+      expect(HTTParty).to receive(:post).with(any_args)
       client.request(content: 'new chat')
     end
   end

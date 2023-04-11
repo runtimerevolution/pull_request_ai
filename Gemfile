@@ -6,4 +6,3 @@ gemspec
 
 gem 'sprockets-rails'
 gem 'puma'
-gem 'rack-attack'
