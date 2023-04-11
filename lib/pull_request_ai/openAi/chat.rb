@@ -3,61 +3,38 @@
 module PullRequestAi
   module OpenAi
     class Chat
-      attr_accessor :description, :feature_type, :current_changes, :response
+      include Dry::Monads[:result, :do]
 
-      ResponseObject = Struct.new(
-        :chat_message, :status_code, :success, :body, :message, :error_type
-      )
+      attr_accessor :feature_type, :current_changes
 
-      def initialize(description, feature_type, current_changes)
-        @description = description
+      def initialize(feature_type, current_changes)
         @feature_type = feature_type
         @current_changes = current_changes
       end
 
-      def self.call(description, feature_type, current_changes)
-        self.new(description, feature_type, current_changes).chat
-      end
+      def chat!
+        response = PullRequestAi::OpenAi::Client.new.request(content: chat_message)
 
-      def chat
-        @response = PullRequestAi::OpenAi::Client.new.request(content: chat_message)
-
-        build_response_object
+        build_response_object response
       end
 
       private
 
       def chat_message
         @chat_message ||= %(
-          Please write a pull request for this #{feature_type},
-          Here's a short description: #{description},
-          Those are all the relevant changes: #{current_changes}.
+          Write a #{feature_type} pull request description
+          based on the following changes: #{current_changes}
         ).squish
       end
 
-      def build_response_object
-        ResponseObject.new(
-          chat_message,       # chat_message
-          response.code,      # status_code
-          response.success?,  # success
-          response_body,      # body
-          response.message,   # message
-          response_error_type # error_type
-        )
-      end
+      def build_response_object(response)
+        body = response.parsed_response
 
-      def response_body
         if response.success?
-          response.parsed_response['choices'].first.dig('message', 'content')
+          Success(body['choices'].first.dig('message', 'content'))
         else
-          response.parsed_response.dig('error', 'message')
+          Failure(body.dig('error', 'message'))
         end
-      end
-
-      def response_error_type
-        return if response.success?
-
-        response.parsed_response.dig('error', 'type')
       end
     end
   end

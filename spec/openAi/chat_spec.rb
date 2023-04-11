@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe PullRequestAi::OpenAi::Chat do
-  let(:description) { 'fix navbar size' }
   let(:feature_type) { 'hotfix' }
   let(:current_changes) { 'width: 100%;' }
 
@@ -39,11 +38,10 @@ RSpec.describe PullRequestAi::OpenAi::Chat do
     before { allow(HTTParty).to receive(:post).and_return(valid_http_response) }
 
     it 'builds the chat message correctly' do
-      translator = described_class.(description, feature_type, current_changes)
+      translator = described_class.new(feature_type, current_changes)
 
-      expect(translator.chat_message).to include(description)
-      expect(translator.chat_message).to include(feature_type)
-      expect(translator.chat_message).to include(current_changes)
+      expect(translator.send(:chat_message)).to include(feature_type)
+      expect(translator.send(:chat_message)).to include(current_changes)
     end
   end
 
@@ -52,13 +50,11 @@ RSpec.describe PullRequestAi::OpenAi::Chat do
       before { allow(HTTParty).to receive(:post).and_return(invalid_http_response) }
 
       it 'builds and returns an invalid response object' do
-        translator = described_class.(description, feature_type, current_changes)
+        translator = described_class.new(feature_type, current_changes).chat!
 
-        expect(translator.status_code).to eq invalid_http_response.code
-        expect(translator.success).to eq invalid_http_response.success?
-        expect(translator.body).to eq error_body.dig('error', 'message')
-        expect(translator.message).to eq invalid_http_response.message
-        expect(translator.error_type).to eq error_body.dig('error', 'type')
+        expect(translator.failure?).to be_truthy
+        expect(translator.success?).to be_falsy
+        expect(translator.failure).to eq error_body.dig('error', 'message')
       end
     end
 
@@ -66,13 +62,11 @@ RSpec.describe PullRequestAi::OpenAi::Chat do
       before { allow(HTTParty).to receive(:post).and_return(valid_http_response) }
 
       it 'builds and returns a valid response object' do
-        translator = described_class.(description, feature_type, current_changes)
+        translator = described_class.new(feature_type, current_changes).chat!
 
-        expect(translator.status_code).to eq valid_http_response.code
-        expect(translator.success).to eq valid_http_response.success?
-        expect(translator.body).to eq success_body['choices'].first.dig('message', 'content')
-        expect(translator.message).to eq valid_http_response.message
-        expect(translator.error_type).to be_nil
+        expect(translator.success?).to be_truthy
+        expect(translator.failure?).to be_falsy
+        expect(translator.success).to eq success_body['choices'].first.dig('message', 'content')
       end
     end
   end
