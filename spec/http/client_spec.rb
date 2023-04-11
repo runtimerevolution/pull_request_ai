@@ -40,7 +40,7 @@ RSpec.describe PullRequestAi::Http::Client do
       expect(client.model).to eq(model)
     end
 
-    it 'accepts openai_api_key as argument' do
+    it 'accepts model as argument' do
       klass = described_class.new(model: 'New Model')
       expect(klass.model).to eq 'New Model'
     end

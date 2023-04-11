@@ -8,13 +8,23 @@
   <p><strong>Selected branch:</strong></p>
   <p><%= @branch %></p>
 
-  <p><strong>Selected PR type:</strong></p>
-  <p><%= @type %></p>
-
   <%= form_with url: pull_request_ai_create_path, method: :post do |form| %>
+
     <div>
       <strong>
-        <%= form.label :description, "Generated description:" %>
+        <%= form.label :title, "Title:" %>
+      </strong>
+    </div>
+
+    <div>
+      <%= form.text_field :title, value: @title %>
+    </div>
+
+    <br>
+
+    <div>
+      <strong>
+        <%= form.label :description, "Description:" %>
       </strong>
     </div>
 
@@ -22,13 +32,17 @@
       <%= form.text_area :description, value: @description %>
     </div>
 
+    <br>
+
     <%= form.hidden_field :branch, value: @branch %>
     <%= form.hidden_field :type, value: @type %>
 
     <div>
-      <%= form.submit "Create" %>
+      <%= form.submit "Create Pull Request" %>
     </div>
   <% end %>
+
+  <br>
 
   <%= button_to 'Back', pull_request_ai.root_path, method: :get %>
 

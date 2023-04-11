@@ -3,17 +3,15 @@ require_dependency 'pull_request_ai/application_controller'
 module PullRequestAi
   class PullRequestAiController < ApplicationController
     before_action :set_defaults, only: [:index, :prepare]
-    before_action :set_state, only: [:confirm, :create, :result]
+    before_action :set_state, only: [:prepare, :confirm, :create, :result]
 
     def index
     end
 
     def prepare
-      _branch = params[:branch]
-      _type = params[:type]
       
       if true
-        redirect_to pull_request_ai_confirm_path(branch: _branch, type: _type)
+        redirect_to pull_request_ai_confirm_path(branch: @branch, type: @type)
       else
         @error_message = "Oops! Something went wrong."
         render :index
@@ -21,17 +19,21 @@ module PullRequestAi
     end
 
     def confirm
+      @title = @type.to_s.capitalize + ' '
       @description = "This will be the result of the AI response."
     end
 
     def create
-      @description = params[:description]
-      if true
-        redirect_to pull_request_ai_result_path(branch: @branch, type: @type)
-      else
-        @error_message = "Oops! Something went wrong."
+      @description = pr_params[:description]
+      @title = pr_params[:title]
+      result = repo_client.open_pull_request(@branch, @title, @description)
+      result.or { |error|
+        @error_message = error.to_s.empty? ? "Oops! Something went wrong." : error.to_s
         render :confirm
-      end
+        return 
+      }
+
+      redirect_to pull_request_ai_result_path(branch: @branch, type: @type)
     end
 
     def result
@@ -39,16 +41,30 @@ module PullRequestAi
 
     private
 
+    def repo_client
+      @repo_client ||= PullRequestAi::Repo::Client.new
+    end
+
     def set_defaults
-      @error_message = nil
-      @branches = ["main", "random", "other"]
-      @types = [['Feature', :feature], ['Hot-fix', :hotfix], ['Release', :release]]
+      @types = [['Feature', :feature], ['Release', :release], ['HotFix', :hotfix]]
+
+      repo_client.destination_branches.fmap { |branches|
+        @error_message = nil
+        @branches = branches
+      }.or { |error|
+        @error_message = "Your project doesn't have a repository configured."
+        @branches = []
+      }
     end
 
     def set_state
       @error_message = nil
-      @branch = params[:branch]
-      @type = params[:type]
+      @branch = pr_params[:branch]
+      @type = pr_params[:type]
+    end
+
+    def pr_params
+      params.permit(:branch, :type, :title, :description)
     end
   end
 end
