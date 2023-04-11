@@ -1,6 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe PullRequestAi::Util::Configuration do
+  it 'should have an github_access_token attribute' do
+    config = described_class.new
+    config.github_access_token = 'someGithubAccessToken'
+    expect(config.github_access_token).to eq 'someGithubAccessToken'
+  end
+
   it 'should have an openai_api_key attribute' do
     config = described_class.new
     config.openai_api_key = 'someApiKey'
@@ -22,6 +28,11 @@ RSpec.describe PullRequestAi::Util::Configuration do
   it 'should have a fixed open_ai_uri attribute' do
     config = described_class.new
     expect(config.open_ai_uri).to eq 'https://api.openai.com'
+  end
+
+  it 'should have a fixed github_api_endpoint attribute' do
+    config = described_class.new
+    expect(config.github_api_endpoint).to eq 'https://api.github.com'
   end
 
   it 'should have a fixed api_version attribute' do

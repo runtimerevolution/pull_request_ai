@@ -1,8 +1,8 @@
 require 'forwardable'
 require 'httparty'
-require 'octokit'
 require 'dry/monads'
 require 'rack/attack'
+require 'git_clone_url'
 
 require 'pull_request_ai/version'
 require 'pull_request_ai/engine'
@@ -13,10 +13,13 @@ require 'pull_request_ai/openAi/chat'
 
 require 'pull_request_ai/repo/reader'
 require 'pull_request_ai/repo/file'
+require "pull_request_ai/repo/client"
+require "pull_request_ai/repo/prompt"
 
 module PullRequestAi
   extend SingleForwardable
-
+  def_delegators :configuration, :github_api_endpoint
+  def_delegators :configuration, :github_access_token, :github_access_token=
   def_delegators :configuration, :openai_api_key, :openai_api_key=
   def_delegators :configuration, :open_ai_uri
   def_delegators :configuration, :api_version
