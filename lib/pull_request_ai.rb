@@ -9,9 +9,9 @@ require 'pull_request_ai/engine'
 require 'pull_request_ai/util/configuration'
 require 'pull_request_ai/http/client'
 
-require "pull_request_ai/repo/client"
-require "pull_request_ai/repo/prompt"
-require "pull_request_ai/repo/file"
+require 'pull_request_ai/repo/client'
+require 'pull_request_ai/repo/prompt'
+require 'pull_request_ai/repo/file'
 
 module PullRequestAi
   extend SingleForwardable
