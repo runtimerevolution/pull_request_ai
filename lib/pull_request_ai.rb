@@ -1,13 +1,15 @@
 require 'forwardable'
 require 'httparty'
 require 'dry/monads'
+require 'rack/attack'
 require 'git_clone_url'
 
 require 'pull_request_ai/version'
 require 'pull_request_ai/engine'
 
 require 'pull_request_ai/util/configuration'
-require 'pull_request_ai/http/client'
+require 'pull_request_ai/openAi/client'
+require 'pull_request_ai/openAi/chat'
 
 require 'pull_request_ai/repo/client'
 require 'pull_request_ai/repo/prompt'
