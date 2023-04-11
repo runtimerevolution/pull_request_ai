@@ -67,6 +67,37 @@ module PullRequestAi
         }
       end
 
+      def changes_between(branch1, branch2)
+        diff_output = prompt.changes_between(branch1, branch2)
+        changes = []
+  
+        file_name = nil
+        modified_lines = []
+        diff_output.each_line do |line|
+          line = line.chomp
+          if line.start_with?("diff --git")
+            if file_name && file_name.end_with?(".lock") == false
+              changes << PullRequestAi::Repo::File.new(file_name, modified_lines)
+            end
+            file_name = line.split(" ")[-1].strip
+            file_name = file_name.start_with?("b/") ? file_name[2..-1] : file_name
+            modified_lines = []
+          elsif line.start_with?("--- ") || line.start_with?("+++ ")
+            next
+          elsif line.start_with?("-") && line.strip != "-"
+            modified_lines << line
+          elsif line.start_with?("+") && line.strip != "+"
+            modified_lines << line
+          end
+        end
+  
+        if file_name
+          changes << PullRequestAi::Repo::File.new(file_name, modified_lines)
+        end
+  
+        changes
+      end
+
       def open_pull_request(to_branch, title, description)
         head = current_branch.or { |error|
           return Failure(error)
