@@ -3,9 +3,11 @@
 module PullRequestAi
   module OpenAi
     class Chat
-      attr_accessor :feature_type, :current_changes, :description, :response
+      attr_accessor :description, :feature_type, :current_changes, :response
 
-      ResponseObject = Struct.new(:chat_message, :status_code, :success, :body, :message, :error_type)
+      ResponseObject = Struct.new(
+        :chat_message, :status_code, :success, :body, :message, :error_type
+      )
 
       def initialize(description, feature_type, current_changes)
         @description = description

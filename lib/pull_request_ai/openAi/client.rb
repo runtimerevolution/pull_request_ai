@@ -26,13 +26,11 @@ module PullRequestAi
       # Makes a request to the OpenAI API
       # Authentication information is automatically added
       def request(content: '')
-        response = HTTParty.post(
+        HTTParty.post(
           build_uri,
           headers: headers,
           body: body(content),
         )
-
-        response
       end
 
       private
