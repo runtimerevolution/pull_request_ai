@@ -11,6 +11,7 @@ module PullRequestAi
     end
 
     def prepare
+      binding.pry
       if true
         redirect_to(pull_request_ai_confirm_path(branch: @branch, type: @type))
       else

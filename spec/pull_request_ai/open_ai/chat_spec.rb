@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe(PullRequestAi::OpenAi::Chat) do
-  let(:feature_type) { 'hotfix' }
+  let(:feature_type) { 'feature' }
   let(:current_changes) { 'width: 100%;' }
 
   # Invalid Request
