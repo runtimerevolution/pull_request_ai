@@ -10,7 +10,7 @@ RSpec.describe(PullRequestAi::OpenAi::Chat) do
   let(:error_body) do
     {
       'error' =>
-            { 'message' => "You didn't provide an API key.", 'type' => 'invalid_request_error' },
+            { 'message' => "You didn't provide an API key.", 'type' => 'invalid_request_error' }
     }
   end
   let(:invalid_http_response) do

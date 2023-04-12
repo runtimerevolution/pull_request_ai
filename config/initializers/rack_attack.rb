@@ -6,8 +6,8 @@ module Rack
     LIMIT_PERIOD = 20.seconds
 
     PROTECTED_ACTIONS = [
-      { controller: 'pull_request_ai/pull_request_ai', action: 'confirm' },
-      { controller: 'pull_request_ai/pull_request_ai', action: 'create' },
+      { controller: 'pull_request_ai/pull_request_ai', action: 'prepare' },
+      { controller: 'pull_request_ai/pull_request_ai', action: 'create' }
     ]
 
     throttle('api_request', limit: REQUEST_LIMIT, period: LIMIT_PERIOD) do |request|

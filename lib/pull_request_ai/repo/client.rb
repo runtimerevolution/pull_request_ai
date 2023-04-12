@@ -110,7 +110,7 @@ module PullRequestAi
           title: title,
           body: description,
           head: head.value!,
-          base: to_branch,
+          base: to_branch
         }.to_json
 
         request(slug.value!, content)
@@ -142,7 +142,7 @@ module PullRequestAi
       def headers
         {
           'Accept' => 'application/vnd.github+json',
-          'Authorization' => "Bearer #{github_access_token}",
+          'Authorization' => "Bearer #{github_access_token}"
         }
       end
     end

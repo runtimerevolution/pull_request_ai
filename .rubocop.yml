@@ -3,7 +3,6 @@ inherit_gem:
 
 require: rubocop-rspec
 
-
 AllCops:
   NewCops: enable
 
@@ -22,3 +21,8 @@ RSpec/MultipleExpectations:
 Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: no_comma
 
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: no_comma
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: no_comma
