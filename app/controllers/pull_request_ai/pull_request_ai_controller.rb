@@ -7,21 +7,31 @@ module PullRequestAi
     before_action :set_defaults, only: [:index, :prepare]
     before_action :set_state, only: [:prepare, :confirm, :create, :result]
 
-    def index
-    end
+    def index; end
 
     def prepare
-      if true
-        redirect_to(pull_request_ai_confirm_path(branch: @branch, type: @type))
-      else
-        @error_message = 'Oops! Something went wrong.'
+      fetch_changes = repo_client.flatten_current_changes_to(@branch)
+
+      if fetch_changes.failure?
+        @error_message = fetch_changes.failure
+        render(:index)
+      end
+
+      binding.pry
+      raise 'dsa'
+      chat_service(fetch_changes.success).chat!.fmap do |description|
+        redirect_to(pull_request_ai_confirm_path(
+          branch: @branch, type: @type, description: description
+        ))
+      end.or do |error|
+        @error_message = error
         render(:index)
       end
     end
 
     def confirm
       @title = @type.to_s.capitalize + ' '
-      @description = 'This will be the result of the AI response.'
+      @description = pr_params[:description]
     end
 
     def create
@@ -45,13 +55,17 @@ module PullRequestAi
       @repo_client ||= PullRequestAi::Repo::Client.new
     end
 
+    def chat_service(changes)
+      @chat_service ||= PullRequestAi::OpenAi::Chat.new(pr_params[:type], changes)
+    end
+
     def set_defaults
       @types = [['Feature', :feature], ['Release', :release], ['HotFix', :hotfix]]
 
       repo_client.destination_branches.fmap do |branches|
         @error_message = nil
         @branches = branches
-      end.or do |_error|
+      end.or do |_|
         @error_message = "Your project doesn't have a repository configured."
         @branches = []
       end
