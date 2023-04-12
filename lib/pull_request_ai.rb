@@ -6,6 +6,7 @@ require 'dry/monads'
 require 'rack/attack'
 require 'git_clone_url'
 
+require 'pull_request_ai/client'
 require 'pull_request_ai/version'
 require 'pull_request_ai/engine'
 
