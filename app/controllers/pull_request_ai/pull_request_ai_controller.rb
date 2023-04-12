@@ -28,13 +28,12 @@ module PullRequestAi
       @description = pr_params[:description]
       @title = pr_params[:title]
       result = repo_client.open_pull_request(@branch, @title, @description)
-      result.or do |error|
+      result.fmap do
+        redirect_to(pull_request_ai_result_path(branch: @branch, type: @type))
+      end.or do |error|
         @error_message = error.to_s.empty? ? 'Oops! Something went wrong.' : error.to_s
         render(:confirm)
-        return
       end
-
-      redirect_to(pull_request_ai_result_path(branch: @branch, type: @type))
     end
 
     def result
