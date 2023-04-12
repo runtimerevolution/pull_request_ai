@@ -11,13 +11,16 @@ module PullRequestAi
     end
 
     def prepare
-      binding.pry
-      if true
-        redirect_to(pull_request_ai_confirm_path(branch: @branch, type: @type))
-      else
-        @error_message = 'Oops! Something went wrong.'
-        render(:index)
-      end
+      # binding.pry
+      # if true
+      #   redirect_to(pull_request_ai_confirm_path(branch: @branch, type: @type))
+      # else
+      #   @error_message = 'Oops! Something went wrong.'
+      #   render(:index)
+      # end
+      # render json: { ok: 'true' }
+      #raise 'dsa'
+      render json: { errors: 'dsadas' }, status: :unprocessable_entity
     end
 
     def confirm
