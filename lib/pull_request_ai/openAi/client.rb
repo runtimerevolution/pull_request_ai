@@ -42,7 +42,7 @@ module PullRequestAi
       def headers
         {
           'Content-Type' => 'application/json',
-          'Authorization' => "Bearer #{openai_api_key}",
+          'Authorization' => "Bearer #{openai_api_key}"
         }
       end
 
@@ -50,7 +50,7 @@ module PullRequestAi
         {
           model: model,
           messages: [{ role: :user, content: content }],
-          temperature: temperature,
+          temperature: temperature
         }.to_json
       end
     end

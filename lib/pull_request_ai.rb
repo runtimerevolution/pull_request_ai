@@ -37,6 +37,4 @@ module PullRequestAi
       @configuration ||= Util::Configuration.new
     end
   end
-
-  private_class_method :configuration
 end
