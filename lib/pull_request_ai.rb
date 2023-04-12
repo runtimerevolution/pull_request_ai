@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'forwardable'
 require 'httparty'
 require 'dry/monads'
@@ -12,8 +14,8 @@ require 'pull_request_ai/openAi/client'
 require 'pull_request_ai/openAi/chat'
 
 require 'pull_request_ai/repo/file'
-require "pull_request_ai/repo/client"
-require "pull_request_ai/repo/prompt"
+require 'pull_request_ai/repo/client'
+require 'pull_request_ai/repo/prompt'
 
 module PullRequestAi
   extend SingleForwardable
@@ -25,14 +27,15 @@ module PullRequestAi
   def_delegators :configuration, :model, :model=
   def_delegators :configuration, :temperature, :temperature=
 
-  def self.configure(&block)
-    yield configuration
-  end
+  class << self
+    def configure(&block)
+      yield configuration
+    end
 
-
-  # Returns an existing configuration object or instantiates a new one
-  def self.configuration
-    @configuration ||= Util::Configuration.new
+    # Returns an existing configuration object or instantiates a new one
+    def configuration
+      @configuration ||= Util::Configuration.new
+    end
   end
 
   private_class_method :configuration

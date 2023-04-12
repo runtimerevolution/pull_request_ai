@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_dependency 'pull_request_ai/application_controller'
 
 module PullRequestAi
@@ -9,31 +11,30 @@ module PullRequestAi
     end
 
     def prepare
-      
       if true
-        redirect_to pull_request_ai_confirm_path(branch: @branch, type: @type)
+        redirect_to(pull_request_ai_confirm_path(branch: @branch, type: @type))
       else
-        @error_message = "Oops! Something went wrong."
-        render :index
+        @error_message = 'Oops! Something went wrong.'
+        render(:index)
       end
     end
 
     def confirm
       @title = @type.to_s.capitalize + ' '
-      @description = "This will be the result of the AI response."
+      @description = 'This will be the result of the AI response.'
     end
 
     def create
       @description = pr_params[:description]
       @title = pr_params[:title]
       result = repo_client.open_pull_request(@branch, @title, @description)
-      result.or { |error|
-        @error_message = error.to_s.empty? ? "Oops! Something went wrong." : error.to_s
-        render :confirm
-        return 
-      }
+      result.or do |error|
+        @error_message = error.to_s.empty? ? 'Oops! Something went wrong.' : error.to_s
+        render(:confirm)
+        return
+      end
 
-      redirect_to pull_request_ai_result_path(branch: @branch, type: @type)
+      redirect_to(pull_request_ai_result_path(branch: @branch, type: @type))
     end
 
     def result
@@ -48,13 +49,13 @@ module PullRequestAi
     def set_defaults
       @types = [['Feature', :feature], ['Release', :release], ['HotFix', :hotfix]]
 
-      repo_client.destination_branches.fmap { |branches|
+      repo_client.destination_branches.fmap do |branches|
         @error_message = nil
         @branches = branches
-      }.or { |error|
+      end.or do |_error|
         @error_message = "Your project doesn't have a repository configured."
         @branches = []
-      }
+      end
     end
 
     def set_state

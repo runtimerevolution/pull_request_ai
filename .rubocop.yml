@@ -1,0 +1,24 @@
+inherit_gem:
+  rubocop-shopify: rubocop.yml
+
+require: rubocop-rspec
+
+
+AllCops:
+  NewCops: enable
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+  SupportedStyles:
+    - single_quotes
+    - double_quotes
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: no_comma
+

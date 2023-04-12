@@ -13,9 +13,9 @@ module PullRequestAi
       attr_reader :api_version
 
       def initialize
-        @api_version = 'v1'.freeze
-        @open_ai_uri = 'https://api.openai.com'.freeze
-        @github_api_endpoint = 'https://api.github.com'.freeze
+        @api_version = 'v1'
+        @open_ai_uri = 'https://api.openai.com'
+        @github_api_endpoint = 'https://api.github.com'
         @model = 'gpt-3.5-turbo'
         @temperature = 1
       end
