@@ -50,12 +50,12 @@ RSpec.describe PullRequestAi::Repo::Client do
       expect(subject.prompt).to be_truthy
     end
 
-    it 'should accepts a prompt object as argument' do
+    it 'should accepts as argument a prompt object' do
       klass = described_class.new(prompt: prompt)
       expect(klass.prompt).to eq prompt
     end
 
-    describe 'not configured' do
+    describe '::not_configured' do
       before do
         allow(prompt).to receive(:configured?).and_return(false)
       end
@@ -101,7 +101,7 @@ RSpec.describe PullRequestAi::Repo::Client do
       end
     end
 
-    describe 'configured' do
+    describe '::configured' do
       let(:changes) {
         """
 diff --git a/Gemfile.lock b/Gemfile.lock
@@ -198,10 +198,10 @@ index 52e12f6..4279e70 100644
         expect(result.first.modified_lines.first).to eq("-    before_action :set_state, only: [:confirm, :create, :result]")
       end
 
-      it 'should return a text of the line changed if configured' do
+      it 'should return a text of the line changed' do
         client = described_class.new(prompt: prompt)
         result = client.flatten_current_changes_to('main').value!
-        
+
         # It should ignore the Gemfile.lock.
         # It should start with the file name.
         # No space between the + or - and the actual change.
@@ -215,7 +215,7 @@ index 52e12f6..4279e70 100644
 """)
       end
 
-      describe 'request' do
+      describe '::request' do
         let(:fake_http_response) { instance_double(HTTParty::Response) }
 
         before do
@@ -226,7 +226,7 @@ index 52e12f6..4279e70 100644
           )
         end
 
-        it 'should perform a request to the GitHub API' do
+        it 'should be able to perform the request' do
           client = described_class.new(prompt: prompt)
           expect(HTTParty).to receive(:send).with(:post, any_args)
           result = client.open_pull_request("main", "title", "description")

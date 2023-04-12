@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PullRequestAi
   module Repo
     class Client
@@ -26,61 +28,61 @@ module PullRequestAi
       end
 
       def repository_slug
-        remote_name.bind { |name|
+        remote_name.bind do |name|
           url = prompt.remote_url(name)
           regex = %r{\A/?(?<slug>.*?)(?:\.git)?\Z}
           uri = GitCloneUrl.parse(url)
           match = regex.match(uri.path)
           match ? Success(match[:slug]) : Failure(:invalid_repository)
-        }
+        end
       rescue URI::InvalidComponentError
         Failure(:invalid_repository)
       end
 
       def remote_branches
-        remote_name.bind { |name|
+        remote_name.bind do |name|
           branches = prompt.remote_branches
-          .reject { !_1.start_with?(name) }
-          .map { _1.strip.sub(/\A#{name}\//, '') }
-          .reject(&:empty?)
+            .reject { !_1.strip.start_with?(name) }
+            .map { _1.strip.sub(%r{\A#{name}/}, '') }
+            .reject(&:empty?)
           Success(branches)
-        }
+        end
       end
 
       def destination_branches
-        current_branch.bind { |current|
-          remote_branches.bind { |branches|
-            Success(branches.reject { _1 == current || _1.start_with?("HEAD") })
-          }
-        }
+        current_branch.bind do |current|
+          remote_branches.bind do |branches|
+            Success(branches.reject { _1 == current || _1.start_with?('HEAD') })
+          end
+        end
       end
 
       def current_changes_to(branch)
-        current_branch.bind { |current|
+        current_branch.bind do |current|
           changes_between(branch, current)
-        }
+        end
       end
 
       def flatten_current_changes_to(branch)
-        current_changes_to(branch).bind { |changes|
-          Success(changes.inject("") { |result, file|  result << file.trimmed_modified_lines })
-        }
+        current_changes_to(branch).bind do |changes|
+          Success(changes.inject(''.dup) { |result, file| result << file.trimmed_modified_lines })
+        end
       end
 
       def open_pull_request(to_branch, title, description)
-        head = current_branch.or { |error|
+        head = current_branch.or do |error|
           return Failure(error)
-        }
-        
-        slug = repository_slug.or { |error|
-          return Failure(error)  
-        }
+        end
+
+        slug = repository_slug.or do |error|
+          return Failure(error)
+        end
 
         content = {
           title: title,
           body: description,
           head: head.value!,
-          base: to_branch
+          base: to_branch,
         }.to_json
 
         request(slug.value!, content)
@@ -128,13 +130,13 @@ module PullRequestAi
           :post,
           build_uri(slug),
           headers: headers,
-          body: content,
+          body: content
         )
 
         # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#create-a-pull-request
         if response.code.to_i == 201
           Success(response.parsed_response)
-        else 
+        else
           errors = response.parsed_response['errors']&.map { |error| error['message'] }&.join(' ')
           errors.to_s.empty? ? Failure(:failed_on_github_api_endpoint) : Failure(errors)
         end
@@ -147,10 +149,9 @@ module PullRequestAi
       def headers
         {
           'Accept' => 'application/vnd.github+json',
-          'Authorization' => "Bearer #{github_access_token}"
+          'Authorization' => "Bearer #{github_access_token}",
         }
       end
-
     end
   end
 end

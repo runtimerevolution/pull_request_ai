@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 PullRequestAi::Engine.routes.draw do
   root 'pull_request_ai#index'
 
