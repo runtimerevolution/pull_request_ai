@@ -18,6 +18,8 @@ module PullRequestAi
         @github_api_endpoint = 'https://api.github.com'
         @model = 'gpt-3.5-turbo'
         @temperature = 1
+        @openai_api_key = ENV['OPENAI_API_KEY']
+        @github_access_token = ENV['GITHUB_ACCESS_TOKEN']
       end
     end
   end

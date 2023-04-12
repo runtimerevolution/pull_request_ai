@@ -26,3 +26,37 @@ Contribution directions go here.
 
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+### Config
+
+The simplier way to initialize this Gem is by setting the following environment variables:
+- [OPENAI_API_KEY](https://platform.openai.com/account/usage)
+- [GITHUB_ACCESS_TOKEN](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+
+Or you can use the `pull_request_ai.rb` initializer file. Never hardcode secrets into your codebase - instead use something like [dotenv](https://github.com/motdotla/dotenv) to pass the keys safely into your environments.
+
+```ruby
+PullRequestAi.configure do |config|
+    config.github_access_token = ENV.fetch('GITHUB_ACCESS_TOKEN')
+    config.openai_api_key = ENV.fetch('OPENAI_API_KEY')
+end
+```
+
+If you don't want to automatically open the pull request you can ignore the GitHub access token configuration.
+
+Using the gem initializer you have access to aditional configurations which are set by default with the current values:
+```ruby
+PullRequestAi.configure do |config|
+  ...
+  config.open_ai_uri = 'https://api.openai.com'
+  config.github_api_endpoint = 'https://api.github.com'
+  config.model = 'gpt-3.5-turbo'
+  config.temperature = 1
+end
+```
+
+Then you can create a client like this:
+
+```ruby
+client = PullRequestAi::Client.new
+```
