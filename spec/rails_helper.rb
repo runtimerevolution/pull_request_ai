@@ -8,6 +8,7 @@ require_relative '../spec/dummy/config/environment'
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
 require 'pry'
+require 'dry/monads'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 

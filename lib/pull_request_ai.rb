@@ -13,9 +13,9 @@ require 'pull_request_ai/util/configuration'
 require 'pull_request_ai/openAi/client'
 require 'pull_request_ai/openAi/chat'
 
-require 'pull_request_ai/repo/file'
 require 'pull_request_ai/repo/client'
 require 'pull_request_ai/repo/prompt'
+require 'pull_request_ai/repo/file'
 
 module PullRequestAi
   extend SingleForwardable
