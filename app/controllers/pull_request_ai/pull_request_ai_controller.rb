@@ -10,12 +10,10 @@ module PullRequestAi
     def index; end
 
     def prepare
-      repo_client.flatten_current_changes_to(@branch).bind do |changes|
-        PullRequestAi::OpenAi::Interpreter.chat!(pr_params[:type], changes).bind do |description|
-          redirect_to(pull_request_ai_confirm_path(
-            branch: @branch, type: @type, description: description
-          ))
-        end
+      client.ask_chat_description(@branch, @type).fmap do |description|
+        redirect_to(pull_request_ai_confirm_path(
+          branch: @branch, type: @type, description: description
+        ))
       end.or do |error|
         @error_message = error
         render(:index)
@@ -30,7 +28,7 @@ module PullRequestAi
     def create
       @description = pr_params[:description]
       @title = pr_params[:title]
-      result = repo_client.open_pull_request(@branch, @title, @description)
+      result = client.open_pull_request(@branch, @title, @description)
       result.fmap do
         redirect_to(pull_request_ai_result_path(branch: @branch, type: @type))
       end.or do |error|
@@ -43,14 +41,14 @@ module PullRequestAi
 
     private
 
-    def repo_client
-      @repo_client ||= PullRequestAi::Repo::Client.new
+    def client
+      @client ||= PullRequestAi::Client.new
     end
 
     def set_defaults
       @types = [['Feature', :feature], ['Release', :release], ['HotFix', :hotfix]]
 
-      repo_client.destination_branches.fmap do |branches|
+      client.destination_branches.fmap do |branches|
         @error_message = nil
         @branches = branches
       end.or do |_|
