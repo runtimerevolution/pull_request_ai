@@ -20,20 +20,36 @@ module PullRequestAi
       PullRequestAi.configuration.temperature = temperature if temperature
     end
 
-    def repo
-      @repo ||= PullRequestAi::Repo::Client.new
+    def repo_reader
+      @repo_reader ||= PullRequestAi::Repo::Reader.new
+    end
+
+    def repo_api
+      @repo_api ||= PullRequestAi::Repo::Api.new
+    end
+
+    def current_opened_pull_requests
+      repo_reader.repository_slug.bind do |slug|
+        repo_reader.current_branch.bind do |branch|
+          repo_api.opened_pull_requests(slug, branch)
+        end
+      end
     end
 
     def destination_branches
-      repo.destination_branches
+      repo_reader.destination_branches
     end
 
-    def open_pull_request(to_branch, title, description)
-      repo.open_pull_request(to_branch, title, description)
+    def open_pull_request_to(base, title, description)
+      repo_reader.repository_slug.bind do |slug|
+        repo_reader.current_branch.bind do |branch|
+          repo_api.open_pull_request(slug, branch, base, title, description)
+        end
+      end
     end
 
     def ask_chat_description(to_branch, type)
-      repo.flatten_current_changes_to(to_branch).bind do |changes|
+      repo_reader.flatten_current_changes_to(to_branch).bind do |changes|
         PullRequestAi::OpenAi::Interpreter.chat!(type, changes)
       end
     end

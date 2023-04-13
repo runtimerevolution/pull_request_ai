@@ -23,9 +23,10 @@ module PullRequestAi
     end
 
     def create
-      result = client.open_pull_request(
+      result = client.open_pull_request_to(
         pr_params[:branch], pr_params[:title], pr_params[:description]
       )
+
       result.fmap do
         render(json: { success: 'true' })
       end.or do |error|
