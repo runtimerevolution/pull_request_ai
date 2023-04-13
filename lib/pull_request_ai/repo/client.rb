@@ -57,35 +57,48 @@ module PullRequestAi
         end
       end
 
-      def current_changes_to(branch)
+      def current_changes_to(base)
         current_branch.bind do |current|
-          changes_between(branch, current)
+          changes_between(base, current)
         end
       end
 
-      def flatten_current_changes_to(branch)
-        current_changes_to(branch).bind do |changes|
+      def flatten_current_changes_to(base)
+        current_changes_to(base).bind do |changes|
           Success(changes.inject(''.dup) { |result, file| result << file.trimmed_modified_lines })
         end
       end
 
-      def open_pull_request(to_branch, title, description)
-        head = current_branch.or do |error|
-          return Failure(error)
+      def open_pull_request_to(base, title, description)
+        current_branch.bind do |head|
+          request(:post, '', {
+            title: title,
+            body: description,
+            head: head,
+            base: base
+          }.to_json)
         end
+      end
 
-        slug = repository_slug.or do |error|
-          return Failure(error)
+      def current_opened_pull_requests
+        current_branch.bind do |head|
+          opened_pull_requests_for(head)
         end
+      end
 
-        content = {
+      def opened_pull_requests_for(branch)
+        request(:get, '', {
+          base: branch
+        }.to_json)
+      end
+
+      def update_pull_request(number, to_branch, title, description)
+        request(:patch, "/#{number}", {
           title: title,
           body: description,
-          head: head.value!,
+          state: 'open',
           base: to_branch
-        }.to_json
-
-        request(slug.value!, content)
+        }.to_json)
       end
 
       private
@@ -125,16 +138,22 @@ module PullRequestAi
         end
       end
 
-      def request(slug, content)
+      def request(type, suffix, content)
+        slug = repository_slug.or do |error|
+          return Failure(error)
+        end
+
         response = HTTParty.send(
-          :post,
-          build_uri(slug),
+          type,
+          build_uri(slug.value!, suffix),
           headers: headers,
           body: content
         )
 
         # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#create-a-pull-request
-        if response.code.to_i == 201
+        # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-pull-requests
+        # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#update-a-pull-request
+        if response.code.to_i == 201 || response.code.to_i == 200
           Success(response.parsed_response)
         else
           errors = response.parsed_response['errors']&.map { |error| error['message'] }&.join(' ')
@@ -142,8 +161,8 @@ module PullRequestAi
         end
       end
 
-      def build_uri(slug)
-        "#{github_api_endpoint}/repos/#{slug}/pulls"
+      def build_uri(slug, suffix)
+        "#{github_api_endpoint}/repos/#{slug}/pulls#{suffix}"
       end
 
       def headers

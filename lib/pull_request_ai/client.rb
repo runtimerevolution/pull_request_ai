@@ -24,12 +24,16 @@ module PullRequestAi
       @repo ||= PullRequestAi::Repo::Client.new
     end
 
+    def current_opened_pull_requests
+      repo.current_opened_pull_requests
+    end
+
     def destination_branches
       repo.destination_branches
     end
 
-    def open_pull_request(to_branch, title, description)
-      repo.open_pull_request(to_branch, title, description)
+    def open_pull_request_to(base, title, description)
+      repo.open_pull_request_to(base, title, description)
     end
 
     def ask_chat_description(to_branch, type)

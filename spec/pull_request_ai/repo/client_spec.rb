@@ -100,7 +100,7 @@ RSpec.describe(PullRequestAi::Repo::Client) do
 
     it 'fails when trying to open a pull request' do
       client = described_class.new(prompt: prompt)
-      expect(client.open_pull_request('main', 'title', 'description').failure).to(eq(:project_not_configured))
+      expect(client.open_pull_request_to('main', 'title', 'description').failure).to(eq(:project_not_configured))
     end
   end
 
@@ -236,7 +236,7 @@ index 52e12f6..4279e70 100644
 
       it 'sends user content to httparty request' do
         client = described_class.new(prompt: prompt)
-        result = client.open_pull_request('main', 'title', 'description')
+        result = client.open_pull_request_to('main', 'title', 'description')
         expect(HTTParty).to(have_received(:send).with(any_args))
         expect(result).to(be_success)
       end

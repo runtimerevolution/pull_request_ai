@@ -28,7 +28,7 @@ module PullRequestAi
     def create
       @description = pr_params[:description]
       @title = pr_params[:title]
-      result = client.open_pull_request(@branch, @title, @description)
+      result = client.open_pull_request_to(@branch, @title, @description)
       result.fmap do
         redirect_to(pull_request_ai_result_path(branch: @branch, type: @type))
       end.or do |error|
