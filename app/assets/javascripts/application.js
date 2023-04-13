@@ -13,7 +13,7 @@ const prTitleField = document.getElementById('pr-title-field');
 const createPrContainer = document.getElementById('create-pr-container');
 
 async function jsonPost(path, data) {
-  loadingContainer.style.display = 'block';
+  showSpinner();
 
   const response = await fetch(path, {
     method: 'post',
@@ -26,6 +26,8 @@ async function jsonPost(path, data) {
   });
 
   if (!response.ok && response.status != 422) {
+    hideSpinner();
+
     throw new Error(`An error has occured: ${response.statusText}`);
   }
 
@@ -36,7 +38,7 @@ descriptionRequestButton.onclick = () => {
   const data = { branch: branchField.value, type: typeField.value };
 
   jsonPost('/pull_request_ai/prepare', data).then(data => {
-    loadingContainer.style.display = 'none';
+    hideSpinner();
 
     if ('errors' in data) {
       errorField.textContent = data.errors;
@@ -61,7 +63,7 @@ createPrButton.onclick = () => {
   };
 
   jsonPost('/pull_request_ai/create', data).then(data => {
-    loadingContainer.style.display = 'none';
+    hideSpinner();
 
     if ('errors' in data) {
       errorField.textContent = data.errors;
@@ -72,4 +74,12 @@ createPrButton.onclick = () => {
   }).catch(errorMsg => {
     errorField.textContent = errorMsg;
   });
+}
+
+function showSpinner() {
+  loadingContainer.style.display = 'block';
+}
+
+function hideSpinner() {
+  loadingContainer.style.display = 'none';
 }
