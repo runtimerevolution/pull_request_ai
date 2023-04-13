@@ -6,45 +6,10 @@ RSpec.describe(PullRequestAi::Repo::Client) do
   include Dry::Monads[:result]
 
   let(:client) { subject }
-  let(:github_api_endpoint) { 'https://api.github.com' }
-  let(:github_access_token) { 'someGithubAccessToken' }
   let(:prompt) { instance_double(PullRequestAi::Repo::Prompt) }
-
-  let(:configuration) do
-    PullRequestAi.configure do |config|
-      config.github_api_endpoint = github_api_endpoint
-      config.github_access_token = github_access_token
-    end
-  end
-
-  before do
-    configuration
-  end
 
   it 'can be initialized' do
     expect { described_class }.not_to(raise_error)
-  end
-
-  describe '::github_api_endpoint' do
-    it 'initializes with the configured github_api_endpoint' do
-      expect(client.github_api_endpoint).to(eq(github_api_endpoint))
-    end
-
-    it 'accepts github_api_endpoint as argument' do
-      klass = described_class.new(github_api_endpoint: 'https://github.com')
-      expect(klass.github_api_endpoint).to(eq('https://github.com'))
-    end
-  end
-
-  describe '::github_access_token' do
-    it 'initializes with the configured github_access_token' do
-      expect(client.github_access_token).to(eq(github_access_token))
-    end
-
-    it 'accepts github_access_token as argument' do
-      klass = described_class.new(github_access_token: 'Github Token')
-      expect(klass.github_access_token).to(eq('Github Token'))
-    end
   end
 
   describe '::prompt' do
@@ -96,11 +61,6 @@ RSpec.describe(PullRequestAi::Repo::Client) do
     it 'fails when getting the flatten current changes to another branch' do
       client = described_class.new(prompt: prompt)
       expect(client.flatten_current_changes_to('main').failure).to(eq(:project_not_configured))
-    end
-
-    it 'fails when trying to open a pull request' do
-      client = described_class.new(prompt: prompt)
-      expect(client.open_pull_request_to('main', 'title', 'description').failure).to(eq(:project_not_configured))
     end
   end
 
@@ -223,23 +183,6 @@ index 52e12f6..4279e70 100644
       client = described_class.new(prompt: prompt)
       result = client.flatten_current_changes_to('main').value!
       expect(result).to(start_with('app/controllers/engine/pull_request_ai_controller.rb'))
-    end
-
-    describe '.request' do
-      let(:fake_http_response) { instance_double(HTTParty::Response) }
-
-      before do
-        allow(HTTParty).to(receive(:send).and_return(fake_http_response))
-        allow(fake_http_response).to(receive(:code)).and_return(201)
-        allow(fake_http_response).to(receive(:parsed_response)).and_return({})
-      end
-
-      it 'sends user content to httparty request' do
-        client = described_class.new(prompt: prompt)
-        result = client.open_pull_request_to('main', 'title', 'description')
-        expect(HTTParty).to(have_received(:send).with(any_args))
-        expect(result).to(be_success)
-      end
     end
   end
 end

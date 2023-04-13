@@ -6,16 +6,8 @@ module PullRequestAi
       include Dry::Monads[:result, :do]
 
       attr_accessor :prompt
-      attr_accessor :github_api_endpoint
-      attr_accessor :github_access_token
 
-      def initialize(
-        github_api_endpoint: nil,
-        github_access_token: nil,
-        prompt: Prompt.new
-      )
-        @github_api_endpoint = github_api_endpoint || PullRequestAi.github_api_endpoint
-        @github_access_token = github_access_token || PullRequestAi.github_access_token
+      def initialize(prompt: Prompt.new)
         @prompt = prompt
       end
 
@@ -69,38 +61,6 @@ module PullRequestAi
         end
       end
 
-      def open_pull_request_to(base, title, description)
-        current_branch.bind do |head|
-          request(:post, '', {
-            title: title,
-            body: description,
-            head: head,
-            base: base
-          }.to_json)
-        end
-      end
-
-      def current_opened_pull_requests
-        current_branch.bind do |head|
-          opened_pull_requests_for(head)
-        end
-      end
-
-      def opened_pull_requests_for(branch)
-        request(:get, '', {
-          base: branch
-        }.to_json)
-      end
-
-      def update_pull_request(number, to_branch, title, description)
-        request(:patch, "/#{number}", {
-          title: title,
-          body: description,
-          state: 'open',
-          base: to_branch
-        }.to_json)
-      end
-
       private
 
       def changes_between(branch1, branch2)
@@ -136,40 +96,6 @@ module PullRequestAi
 
           Success(changes)
         end
-      end
-
-      def request(type, suffix, content)
-        slug = repository_slug.or do |error|
-          return Failure(error)
-        end
-
-        response = HTTParty.send(
-          type,
-          build_uri(slug.value!, suffix),
-          headers: headers,
-          body: content
-        )
-
-        # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#create-a-pull-request
-        # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-pull-requests
-        # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#update-a-pull-request
-        if response.code.to_i == 201 || response.code.to_i == 200
-          Success(response.parsed_response)
-        else
-          errors = response.parsed_response['errors']&.map { |error| error['message'] }&.join(' ')
-          errors.to_s.empty? ? Failure(:failed_on_github_api_endpoint) : Failure(errors)
-        end
-      end
-
-      def build_uri(slug, suffix)
-        "#{github_api_endpoint}/repos/#{slug}/pulls#{suffix}"
-      end
-
-      def headers
-        {
-          'Accept' => 'application/vnd.github+json',
-          'Authorization' => "Bearer #{github_access_token}"
-        }
       end
     end
   end
