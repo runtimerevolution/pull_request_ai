@@ -8,4 +8,4 @@ gemspec
 
 gem 'sprockets-rails'
 gem 'puma'
-gem "dotenv"
+gem 'dotenv'

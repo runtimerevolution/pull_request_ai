@@ -17,8 +17,6 @@ module PullRequestAi
         render(:index)
       end
 
-      binding.pry
-      raise 'dsa'
       chat_service(fetch_changes.success).chat!.fmap do |description|
         redirect_to(pull_request_ai_confirm_path(
           branch: @branch, type: @type, description: description
@@ -46,8 +44,7 @@ module PullRequestAi
       end
     end
 
-    def result
-    end
+    def result; end
 
     private
 
