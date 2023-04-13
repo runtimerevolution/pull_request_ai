@@ -11,7 +11,7 @@ require 'pull_request_ai/engine'
 
 require 'pull_request_ai/util/configuration'
 require 'pull_request_ai/openAi/client'
-require 'pull_request_ai/openAi/chat'
+require 'pull_request_ai/openAi/interpreter'
 
 require 'pull_request_ai/repo/client'
 require 'pull_request_ai/repo/prompt'

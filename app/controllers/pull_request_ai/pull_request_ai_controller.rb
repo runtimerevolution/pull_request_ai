@@ -10,17 +10,12 @@ module PullRequestAi
     def index; end
 
     def prepare
-      fetch_changes = repo_client.flatten_current_changes_to(@branch)
-
-      if fetch_changes.failure?
-        @error_message = fetch_changes.failure
-        render(:index)
-      end
-
-      chat_service(fetch_changes.success).chat!.fmap do |description|
-        redirect_to(pull_request_ai_confirm_path(
-          branch: @branch, type: @type, description: description
-        ))
+      repo_client.flatten_current_changes_to(@branch).bind do |changes|
+        PullRequestAi::OpenAi::Interpreter.chat!(pr_params[:type], changes).bind do |description|
+          redirect_to(pull_request_ai_confirm_path(
+            branch: @branch, type: @type, description: description
+          ))
+        end
       end.or do |error|
         @error_message = error
         render(:index)
@@ -50,10 +45,6 @@ module PullRequestAi
 
     def repo_client
       @repo_client ||= PullRequestAi::Repo::Client.new
-    end
-
-    def chat_service(changes)
-      @chat_service ||= PullRequestAi::OpenAi::Chat.new(pr_params[:type], changes)
     end
 
     def set_defaults
