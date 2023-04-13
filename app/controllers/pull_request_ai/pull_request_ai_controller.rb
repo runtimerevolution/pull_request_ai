@@ -7,25 +7,26 @@ module PullRequestAi
     before_action :set_defaults, only: [:index, :prepare]
     before_action :set_state, only: [:prepare, :confirm, :create, :result]
 
-    def index
-    end
+    def index; end
 
     def prepare
-      # binding.pry
-      # if true
-      #   redirect_to(pull_request_ai_confirm_path(branch: @branch, type: @type))
-      # else
-      #   @error_message = 'Oops! Something went wrong.'
+      # repo_client.flatten_current_changes_to(@branch).bind do |changes|
+      #   PullRequestAi::OpenAi::Interpreter.chat!(pr_params[:type], changes).bind do |description|
+      #     redirect_to(pull_request_ai_confirm_path(
+      #       branch: @branch, type: @type, description: description
+      #     ))
+      #   end
+      # end.or do |error|
+      #   @error_message = error
       #   render(:index)
       # end
-      # render json: { ok: 'true' }
-      #raise 'dsa'
       render json: { errors: 'dsadas' }, status: :unprocessable_entity
+
     end
 
     def confirm
       @title = @type.to_s.capitalize + ' '
-      @description = 'This will be the result of the AI response.'
+      @description = pr_params[:description]
     end
 
     def create
@@ -40,8 +41,7 @@ module PullRequestAi
       end
     end
 
-    def result
-    end
+    def result; end
 
     private
 
@@ -55,7 +55,7 @@ module PullRequestAi
       repo_client.destination_branches.fmap do |branches|
         @error_message = nil
         @branches = branches
-      end.or do |_error|
+      end.or do |_|
         @error_message = "Your project doesn't have a repository configured."
         @branches = []
       end

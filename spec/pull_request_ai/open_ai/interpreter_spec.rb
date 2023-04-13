@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe(PullRequestAi::OpenAi::Chat) do
-  let(:feature_type) { 'feature' }
+RSpec.describe(PullRequestAi::OpenAi::Interpreter) do
+  let(:feature_type) { 'hotfix' }
   let(:current_changes) { 'width: 100%;' }
 
   # Invalid Request
@@ -36,13 +36,11 @@ RSpec.describe(PullRequestAi::OpenAi::Chat) do
   end
 
   describe '#chat_message' do
-    before { allow(HTTParty).to(receive(:post).and_return(valid_http_response)) }
-
     it 'builds the chat message correctly' do
-      translator = described_class.new(feature_type, current_changes)
+      message = described_class.send(:build_chat_message, feature_type, current_changes)
 
-      expect(translator.send(:chat_message)).to(include(feature_type))
-      expect(translator.send(:chat_message)).to(include(current_changes))
+      expect(message).to(include(feature_type))
+      expect(message).to(include(current_changes))
     end
   end
 
@@ -51,7 +49,7 @@ RSpec.describe(PullRequestAi::OpenAi::Chat) do
       before { allow(HTTParty).to(receive(:post).and_return(invalid_http_response)) }
 
       it 'builds and returns an invalid response object' do
-        translator = described_class.new(feature_type, current_changes).chat!
+        translator = described_class.chat!(feature_type, current_changes)
 
         expect(translator).to(be_failure)
         expect(translator).not_to(be_success)
@@ -63,7 +61,7 @@ RSpec.describe(PullRequestAi::OpenAi::Chat) do
       before { allow(HTTParty).to(receive(:post).and_return(valid_http_response)) }
 
       it 'builds and returns a valid response object' do
-        translator = described_class.new(feature_type, current_changes).chat!
+        translator = described_class.chat!(feature_type, current_changes)
 
         expect(translator).to(be_success)
         expect(translator).not_to(be_failure)
