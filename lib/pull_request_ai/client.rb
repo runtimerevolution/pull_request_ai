@@ -37,11 +37,5 @@ module PullRequestAi
         PullRequestAi::OpenAi::Interpreter.chat!(type, changes)
       end
     end
-
-    def ask_chat_description_and_open_pull_request(to_branch, type, title)
-      ask_chat_description(to_branch, type).bind do |description|
-        open_pull_request(to_branch, title, description)
-      end
-    end
   end
 end
