@@ -60,3 +60,6 @@ Then you can create a client like this:
 ```ruby
 client = PullRequestAi::Client.new
 ```
+
+### Usage
+
