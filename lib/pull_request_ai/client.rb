@@ -33,9 +33,8 @@ module PullRequestAi
     end
 
     def ask_chat_description(to_branch, type)
-      repo_client.flatten_current_changes_to(to_branch).bind do |changes|
-        chat = PullRequestAi.OpenAi::Chat.new(type, changes)
-        chat.chat!
+      repo.flatten_current_changes_to(to_branch).bind do |changes|
+        PullRequestAi::OpenAi::Interpreter.chat!(type, changes)
       end
     end
 
