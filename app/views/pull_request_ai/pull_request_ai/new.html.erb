@@ -1,0 +1,37 @@
+<div>
+  <h2><strong>Pull Request AI</strong></h2>
+
+  <p id='error-field' class='mt-20'>
+    <%= @error_message %>
+  </p>
+
+  <div class='mt-20'>
+    <%= label_tag 'Destination Branch' %>
+    <%= select_tag :branch, options_for_select(@branches || []), { id: 'branch-field', class: 'block mt-5' } %>
+  </div>
+
+  <div class='mt-20'>
+    <%= label_tag 'Pull Request Type' %>
+    <%= select_tag :type, options_for_select(@types), { id: 'type-field', class: 'block mt-5' } %>
+  </div>
+
+  <%= button_tag 'Confirm', { id: 'description-request-btn', class: 'mt-20' } %>
+</div>
+
+<div id='create-pr-container' class='hide mt-20'>
+  <div>
+    <%= label_tag 'Pull Request Description' %>
+    <%= text_area_tag :description, '', { id: 'description-field', class: 'block mt-5' } %>
+  </div>
+
+  <div class='mt-20'>
+    <%= label_tag 'Pull Request Title:' %>
+    <%= text_field_tag :pull_request_title, '', { id: 'pr-title-field', class: 'block mt-5' } %>
+  </div>
+
+  <%= button_tag 'Create Pull Request', { id: 'create-pr-btn', class: 'mt-20' } %>
+
+  <p id='feedback-field' class='mt-20'/>
+</div>
+
+<%= javascript_include_tag 'application.js' %>
