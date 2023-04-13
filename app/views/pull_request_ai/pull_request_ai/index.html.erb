@@ -1,25 +1,21 @@
 <div>
   <h2><strong>Pull Request AI</strong></h2>
 
-  <% if @error_message %>
-    <p><%= @error_message %></p>
-  <% end %>
+  <p id='error-field'></p>
 
-  <%= form_with url: pull_request_ai_prepare_path, method: :post do |form| %>
-    
-    <div>
-      <%= form.label 'Destination Branch' %>
-      <%= form.select :branch, @branches %>
-    </div>
+  <div>
+    <%= label_tag 'Destination Branch' %>
+    <%= select_tag :branch, options_for_select(@branches), { id: 'branch-field' } %>
+  </div>
 
-    <div>
-      <%= form.label 'Pull Request Type' %>
-      <%= form.select :type, @types %>
-    </div>
+  <div>
+    <%= label_tag 'Pull Request Type' %>
+    <%= select_tag :type, options_for_select(@types), { id: 'type-field' } %>
+  </div>
 
-    <div>
-      <%= form.submit "Next" %>
-    </div>
-  <% end %>
-
+  <div>
+    <%= button_tag 'Next', { id: 'description-request-btn' } %>
+  </div>
 </div>
+
+<%= javascript_include_tag 'application.js' %>

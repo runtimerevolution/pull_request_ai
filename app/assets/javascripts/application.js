@@ -1,7 +1,12 @@
-async function fetchPrDescription(branch) {
+const descriptionRequestBtn = document.getElementById('description-request-btn');
+const errorField = document.getElementById('error-field');
+const branchField = document.getElementById('branch-field');
+const typeField = document.getElementById('type-field');
+
+async function fetchPrDescription() {
   const response = await fetch('/pull_request_ai/prepare', {
     method: 'post',
-    body: JSON.stringify({ branch }),
+    body: JSON.stringify({ branch: branchField.value, type: typeField.value }),
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -9,19 +14,26 @@ async function fetchPrDescription(branch) {
     credentials: 'same-origin'
   });
 
-  if (!response.ok) {
-    const message = `An error has occured: ${response.status}`;
-    throw new Error(message);
+  if (!response.ok && response.status != 422) {
+    throw new Error(`An error has occured: ${response.statusText}`);
   }
 
   return await response.json();
 }
 
-fetchPrDescription('main').then(data => {
-  console.log(data);
-}).catch(error => {
-  console.log(error)
-});
+descriptionRequestBtn.onclick = () => {
+  fetchPrDescription().then(data => {
+    if ('errors' in data) {
+      errorField.textContent += data.errors;
+    }
+    else {
+      console.log('deu')
+    }
+  }).catch(error => {
+    errorField.textContent += error;
+  });
+}
+
 
 
 // fetch('/pull_request_ai/prepare', {

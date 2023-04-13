@@ -10,18 +10,16 @@ module PullRequestAi
     def index; end
 
     def prepare
-      # repo_client.flatten_current_changes_to(@branch).bind do |changes|
-      #   PullRequestAi::OpenAi::Interpreter.chat!(pr_params[:type], changes).bind do |description|
-      #     redirect_to(pull_request_ai_confirm_path(
-      #       branch: @branch, type: @type, description: description
-      #     ))
-      #   end
-      # end.or do |error|
-      #   @error_message = error
-      #   render(:index)
-      # end
-      render json: { errors: 'dsadas' }, status: :unprocessable_entity
-
+      repo_client.flatten_current_changes_to(@branch).bind do |changes|
+        PullRequestAi::OpenAi::Interpreter.chat!(pr_params[:type], changes).bind do |description|
+          redirect_to(pull_request_ai_confirm_path(
+            branch: @branch, type: @type, description: description
+          ))
+        end
+      end.or do |error|
+        @error_message = error
+        render(:index)
+      end
     end
 
     def confirm
