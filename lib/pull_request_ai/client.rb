@@ -21,7 +21,7 @@ module PullRequestAi
     end
 
     def repo_reader
-      @repo_reader ||= PullRequestAi::Repo::Client.new
+      @repo_reader ||= PullRequestAi::Repo::Reader.new
     end
 
     def repo_api

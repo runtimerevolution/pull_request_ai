@@ -2,7 +2,7 @@
 
 module PullRequestAi
   module Repo
-    class Client
+    class Reader
       include Dry::Monads[:result, :do]
 
       attr_accessor :prompt
