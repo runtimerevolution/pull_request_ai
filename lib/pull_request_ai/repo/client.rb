@@ -59,7 +59,6 @@ module PullRequestAi
 
       def current_changes_to(branch)
         current_branch.bind do |current|
-          binding.pry
           changes_between(branch, current)
         end
       end

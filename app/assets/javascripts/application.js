@@ -1,12 +1,19 @@
-const descriptionRequestBtn = document.getElementById('description-request-btn');
+const descriptionRequestButton = document.getElementById('description-request-btn');
+const createPrButton = document.getElementById('create-pr-btn');
+
 const errorField = document.getElementById('error-field');
+const feedbackField = document.getElementById('feedback-field');
 const branchField = document.getElementById('branch-field');
 const typeField = document.getElementById('type-field');
+const descriptionField = document.getElementById('description-field');
+const prTitleField = document.getElementById('pr-title-field');
 
-async function fetchPrDescription() {
-  const response = await fetch('/pull_request_ai/prepare', {
+const createPrContainer = document.getElementById('create-pr-container');
+
+async function jsonPost(path, data) {
+  const response = await fetch(path, {
     method: 'post',
-    body: JSON.stringify({ branch: branchField.value, type: typeField.value }),
+    body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -21,38 +28,40 @@ async function fetchPrDescription() {
   return await response.json();
 }
 
-descriptionRequestBtn.onclick = () => {
-  fetchPrDescription().then(data => {
+descriptionRequestButton.onclick = () => {
+  const data = { branch: branchField.value, type: typeField.value };
+
+  jsonPost('/pull_request_ai/prepare', data).then(data => {
     if ('errors' in data) {
-      errorField.textContent += data.errors;
+      errorField.textContent = data.errors;
     }
     else {
-      console.log('deu')
+      errorField.textContent = '';
+      descriptionField.value = data.description;
+
+      branchField.setAttribute('disabled', '');
+      typeField.setAttribute('disabled', '');
+      descriptionRequestButton.classList.add('hide');
+      createPrContainer.classList.remove('hide');
     }
-  }).catch(error => {
-    errorField.textContent += error;
+  }).catch(errorMsg => {
+    errorField.textContent = errorMsg;
   });
 }
 
+createPrButton.onclick = () => {
+  const data = {
+    branch: branchField.value, description: descriptionField.value, title: prTitleField.value
+  };
 
-
-// fetch('/pull_request_ai/prepare', {
-//   method: 'post',
-//   body: JSON.stringify({first_name: "Ricky", last_name: "Bobby"}),
-//   headers: {
-//     'Content-Type': 'application/json',
-//     'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-//   },
-//   credentials: 'same-origin'
-// }).then(function(response) {
-//   if(!response.ok) {
-//     throw new Error("not ok");
-//   }
-
-//   return response.json();
-// }).then(function(data) {
-//   console.log(data);
-// }).catch(error => {
-//   debugger;
-//   console.log(error)
-// });
+  jsonPost('/pull_request_ai/create', data).then(data => {
+    if ('errors' in data) {
+      errorField.textContent = data.errors;
+    }
+    else {
+      feedbackField.textContent = 'Pull Request created successfully';
+    }
+  }).catch(errorMsg => {
+    errorField.textContent = errorMsg;
+  });
+}
