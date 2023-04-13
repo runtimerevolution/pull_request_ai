@@ -26,3 +26,10 @@ Style/TrailingCommaInHashLiteral:
 
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: no_comma
+
+RSpec/AnyInstance:
+  Exclude:
+    - 'spec/config/initializers/rack/attack_spec.rb'
+
+RSpec/ExampleLength:
+  Max: 10
