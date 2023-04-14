@@ -18,36 +18,41 @@ module PullRequestAi
 
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-pull-requests
       def opened_pull_requests(slug, head, base)
-        request(:get, slug, '', 200, {
+        query = {
           head: head,
           base: base
-        }, {})
+        }
+        url = build_url(slug)
+        request(:get, url, 200, query, {})
       end
 
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#update-a-pull-request
       def update_pull_request(slug, number, base, title, description)
-        request(:patch, slug, "/#{number}", 200, {}, {
+        content = {
           title: title,
           body: description,
           state: 'open',
           base: base
-        }.to_json)
+        }.to_json
+        url = build_url(slug, "/#{number}")
+        request(:patch, url, 200, {}, content)
       end
 
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#create-a-pull-request
       def open_pull_request(slug, head, base, title, description)
-        request(:post, slug, '', 201, {}, {
+        content = {
           title: title,
           body: description,
           head: head,
           base: base
-        }.to_json)
+        }.to_json
+        url = build_url(slug)
+        request(:post, url, 201, {}, content)
       end
 
       private
 
-      def request(type, slug, suffix, success_code, query, content)
-        url = build_url(slug, suffix)
+      def request(type, url, success_code, query, content)
         response = HTTParty.send(type, url, headers: headers, query: query, body: content)
         if response.code.to_i == success_code
           Success(response.parsed_response)
@@ -57,7 +62,7 @@ module PullRequestAi
         end
       end
 
-      def build_url(slug, suffix)
+      def build_url(slug, suffix = '')
         "#{github_api_endpoint}/repos/#{slug}/pulls#{suffix}"
       end
 

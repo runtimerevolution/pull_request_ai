@@ -22,12 +22,13 @@ module PullRequestAi
           else
             open_pr = open_prs.first
             render(json: {
-              description: description, 
+              description: description,
               opened: {
-                number: open_pr.dig('number'),
-                title: open_pr.dig('title'),
-                description: open_pr.dig('body')
-            }})
+                number: open_pr['number'],
+                title: open_pr['title'],
+                description: open_pr['body']
+              }
+            })
           end
         end
       end.or do |error|

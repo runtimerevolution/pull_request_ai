@@ -33,7 +33,8 @@ async function jsonPost(path, data) {
 
   if (!response.ok && response.status != 422) {
     hideSpinner();
-
+    unlockSelectors();
+    disableSubmission();
     throw new Error(`An error has occured: ${response.statusText}`);
   }
 
