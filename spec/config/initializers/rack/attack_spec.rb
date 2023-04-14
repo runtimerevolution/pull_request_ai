@@ -9,7 +9,13 @@ describe Rack::Attack do
     Rails.application
   end
 
-  before { described_class.cache.store = ActiveSupport::Cache::MemoryStore.new }
+  before do
+    allow_any_instance_of(
+      PullRequestAi::PullRequestAiController
+    ).to(receive(:prepare).and_return({}))
+
+    described_class.cache.store = ActiveSupport::Cache::MemoryStore.new
+  end
 
   describe 'throttle excessive POST requests to api confirmation' do
     let(:limit) { 5 }
@@ -17,7 +23,9 @@ describe Rack::Attack do
     context 'when number of requests is lower than the limit' do
       it 'does not change the request status' do
         limit.times do
-          post '/pull_request_ai/prepare', {}, 'REMOTE_ADDR' => '1.2.3.9'
+          post '/pull_request_ai/prepare',
+            { pull_request_ai: { branch: 'test' } },
+            'REMOTE_ADDR' => '1.2.3.9'
           expect(last_response.status).not_to(eq(429))
         end
       end
@@ -26,7 +34,9 @@ describe Rack::Attack do
     context 'when number of requests is higher than the limit' do
       it 'changes the request status to 429' do
         (limit * 2).times do |i|
-          post '/pull_request_ai/prepare', {}, 'REMOTE_ADDR' => '1.2.3.9'
+          post '/pull_request_ai/prepare',
+            { pull_request_ai: { branch: 'test' } },
+            'REMOTE_ADDR' => '1.2.3.9'
           expect(last_response.status).to(eq(429)) if i > limit
         end
       end
