@@ -18,10 +18,10 @@ module PullRequestAi
       client.current_opened_pull_requests_to(pr_params[:branch]).bind do |open_prs|
         client.ask_chat_description(pr_params[:branch], pr_params[:type]).fmap do |description|
           if open_prs.empty?
-            return render(json: { description: description })
+            render(json: { description: description })
           else
             open_pr = open_prs.first
-            return render(json: {
+            render(json: {
               description: description, 
               opened: {
                 number: open_pr.dig('number'),
