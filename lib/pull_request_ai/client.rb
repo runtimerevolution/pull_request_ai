@@ -28,10 +28,10 @@ module PullRequestAi
       @repo_api ||= PullRequestAi::Repo::Api.new
     end
 
-    def current_opened_pull_requests
+    def current_opened_pull_requests_to(base)
       repo_reader.repository_slug.bind do |slug|
         repo_reader.current_branch.bind do |branch|
-          repo_api.opened_pull_requests(slug, branch)
+          repo_api.opened_pull_requests(slug, branch, base)
         end
       end
     end

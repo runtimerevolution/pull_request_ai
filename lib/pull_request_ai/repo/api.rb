@@ -17,9 +17,10 @@ module PullRequestAi
       end
 
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-pull-requests
-      def opened_pull_requests(slug, branch)
+      def opened_pull_requests(slug, head, base)
         request(:get, slug, '', 200, {
-          base: branch
+          head: head,
+          base: base
         }.to_json)
       end
 
