@@ -21,12 +21,12 @@ module PullRequestAi
         request(:get, slug, '', 200, {
           head: head,
           base: base
-        }.to_json)
+        }, {})
       end
 
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#update-a-pull-request
       def update_pull_request(slug, number, base, title, description)
-        request(:patch, slug, "/#{number}", 200, {
+        request(:patch, slug, "/#{number}", 200, {}, {
           title: title,
           body: description,
           state: 'open',
@@ -36,7 +36,7 @@ module PullRequestAi
 
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#create-a-pull-request
       def open_pull_request(slug, head, base, title, description)
-        request(:post, slug, '', 201, {
+        request(:post, slug, '', 201, {}, {
           title: title,
           body: description,
           head: head,
@@ -46,9 +46,9 @@ module PullRequestAi
 
       private
 
-      def request(type, slug, suffix, success_code, content)
+      def request(type, slug, suffix, success_code, query, content)
         url = build_url(slug, suffix)
-        response = HTTParty.send(type, url, headers: headers, body: content)
+        response = HTTParty.send(type, url, headers: headers, query: query, body: content)
         if response.code.to_i == success_code
           Success(response.parsed_response)
         else

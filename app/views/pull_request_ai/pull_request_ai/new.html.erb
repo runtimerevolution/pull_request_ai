@@ -19,17 +19,41 @@
 </div>
 
 <div id='create-pr-container' class='hide mt-20'>
-  <div>
-    <%= label_tag 'Pull Request Description' %>
-    <%= text_area_tag :description, '', { id: 'description-field', class: 'block mt-5' } %>
-  </div>
+
+  <%= hidden_field_tag 'open_pr_number', '' %>
 
   <div class='mt-20'>
     <%= label_tag 'Pull Request Title:' %>
     <%= text_field_tag :pull_request_title, '', { id: 'pr-title-field', class: 'block mt-5' } %>
   </div>
 
+  <br>
+
+  <div>
+    <%= label_tag 'ChatGPT Suggested Description' %>
+    <%= text_area_tag :description, '', { id: 'description-field', class: 'block mt-5' } %>
+  </div>
+
+  <div id='opened-pr-container' class='hide mt-20'>
+  
+    <%= button_tag 'Copy suggestion to submission', { id: 'copy-suggestion-pr-btn', class: 'mt-20' } %>
+
+    <br>
+
+    <br>
+
+    <div>
+      <%= label_tag 'Description for Submission' %>
+      <%= text_area_tag :description, '', { id: 'current-description-field', class: 'block mt-5' } %>
+    </div>
+
+  </div>
+
+  <%= button_tag 'Reselect', { id: 'reselect-pr-btn', class: 'mt-20' } %>
+
   <%= button_tag 'Create Pull Request', { id: 'create-pr-btn', class: 'mt-20' } %>
+
+  <%= button_tag 'Update Pull Request', { id: 'update-pr-btn', class: 'mt-20' } %>
 
   <p id='feedback-field' class='mt-20'/>
 </div>

@@ -37,9 +37,26 @@ module PullRequestAi
 
     def create
       result = client.open_pull_request_to(
-        pr_params[:branch], pr_params[:title], pr_params[:description]
+        pr_params[:branch],
+        pr_params[:title],
+        pr_params[:description]
       )
+      proccess_result(result)
+    end
 
+    def update
+      result = client.update_pull_request(
+        pr_params[:number],
+        pr_params[:branch],
+        pr_params[:title],
+        pr_params[:description]
+      )
+      proccess_result(result)
+    end
+
+    private
+
+    def proccess_result(result)
       result.fmap do
         render(json: { success: 'true' })
       end.or do |error|
@@ -50,14 +67,12 @@ module PullRequestAi
       end
     end
 
-    private
-
     def client
       @client ||= PullRequestAi::Client.new
     end
 
     def pr_params
-      params.require(:pull_request_ai).permit(:branch, :type, :title, :description)
+      params.require(:pull_request_ai).permit(:number, :branch, :type, :title, :description)
     end
   end
 end

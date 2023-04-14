@@ -48,6 +48,12 @@ module PullRequestAi
       end
     end
 
+    def update_pull_request(number, base, title, description)
+      repo_reader.repository_slug.bind do |slug|
+        repo_api.update_pull_request(slug, number, base, title, description)
+      end
+    end
+
     def ask_chat_description(to_branch, type)
       repo_reader.flatten_current_changes_to(to_branch).bind do |changes|
         PullRequestAi::OpenAi::Interpreter.chat!(type, changes)
