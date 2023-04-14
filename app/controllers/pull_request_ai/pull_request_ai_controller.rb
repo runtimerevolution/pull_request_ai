@@ -15,8 +15,21 @@ module PullRequestAi
     end
 
     def prepare
-      client.ask_chat_description(pr_params[:branch], pr_params[:type]).fmap do |description|
-        render(json: { description: description })
+      client.current_opened_pull_requests_to(pr_params[:branch]).bind do |open_prs|
+        client.ask_chat_description(pr_params[:branch], pr_params[:type]).fmap do |description|
+          if open_prs.empty?
+            return render(json: { description: description })
+          else
+            open_pr = open_prs.first
+            return render(json: {
+              description: description, 
+              opened: {
+                number: open_pr.dig('number'),
+                title: open_pr.dig('title'),
+                description: open_pr.dig('body')
+            }})
+          end
+        end
       end.or do |error|
         render(json: { errors: error }, status: :unprocessable_entity)
       end
