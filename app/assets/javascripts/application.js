@@ -52,7 +52,7 @@ descriptionRequestButton.onclick = () => {
 
   lockSelectors();
 
-  jsonPost('pull_request_ai/prepare', data).then(data => {
+  jsonPost('/rrtools/pull_request_ai/prepare', data).then(data => {
     hideSpinner();
 
     if ('errors' in data) {
@@ -78,7 +78,7 @@ createPrButton.onclick = () => {
     branch: branchField.value, description: descriptionField.value, title: prTitleField.value
   };
 
-  jsonPost('pull_request_ai/create', data).then(data => {
+  jsonPost('/rrtools/pull_request_ai/create', data).then(data => {
     hideSpinner();
 
     if ('errors' in data) {
@@ -97,7 +97,7 @@ updatePrButton.onclick = () => {
     number: openPrNumber.value, branch: branchField.value, description: currentDescriptionField.value, title: prTitleField.value
   };
 
-  jsonPost('pull_request_ai/update', data).then(data => {
+  jsonPost('/rrtools/pull_request_ai/update', data).then(data => {
     hideSpinner();
 
     if ('errors' in data) {

@@ -19,7 +19,7 @@ module PullRequestAi
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-pull-requests
       def opened_pull_requests(slug, head, base)
         query = {
-          head: head,
+          head: "#{slug.split(":").first}:#{head}",
           base: base
         }
         url = build_url(slug)
