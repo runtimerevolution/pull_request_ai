@@ -37,7 +37,7 @@ async function jsonPost(path, data) {
 descriptionRequestButton.onclick = () => {
   const data = { branch: branchField.value, type: typeField.value };
 
-  jsonPost('/pull_request_ai/prepare', data).then(data => {
+  jsonPost('pull_request_ai/prepare', data).then(data => {
     hideSpinner();
 
     if ('errors' in data) {
@@ -62,7 +62,7 @@ createPrButton.onclick = () => {
     branch: branchField.value, description: descriptionField.value, title: prTitleField.value
   };
 
-  jsonPost('/pull_request_ai/create', data).then(data => {
+  jsonPost('pull_request_ai/create', data).then(data => {
     hideSpinner();
 
     if ('errors' in data) {
