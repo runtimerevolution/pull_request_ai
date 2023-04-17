@@ -15,14 +15,15 @@ module PullRequestAi
     end
 
     def prepare
-      client.current_opened_pull_requests_to(pr_params[:branch]).bind do |open_prs|
-        client.ask_chat_description(pr_params[:branch], pr_params[:type]).fmap do |description|
+      client.ask_chat_description(pr_params[:branch], pr_params[:type]).fmap do |description|
+        client.current_opened_pull_requests_to(pr_params[:branch]).fmap do |open_prs|
           if open_prs.empty?
-            render(json: { description: description })
+            render(json: { description: description, github_enabled: true })
           else
             open_pr = open_prs.first
             render(json: {
               description: description,
+              github_enabled: true,
               opened: {
                 number: open_pr['number'],
                 title: open_pr['title'],
@@ -30,6 +31,8 @@ module PullRequestAi
               }
             })
           end
+        end.or do |_|
+          render(json: { description: description, github_enabled: false })
         end
       end.or do |error|
         render(json: { errors: error }, status: :unprocessable_entity)
