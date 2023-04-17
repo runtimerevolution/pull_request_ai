@@ -56,7 +56,7 @@ RSpec.describe(PullRequestAi::Repo::Api) do
     end
 
     it 'sends user content to httparty request' do
-      result = api.opened_pull_requests('repo/user', 'feature1')
+      result = api.opened_pull_requests('repo/user', 'feature1', 'main')
       expect(HTTParty).to(have_received(:send).with(any_args))
       expect(result).to(be_success)
     end
