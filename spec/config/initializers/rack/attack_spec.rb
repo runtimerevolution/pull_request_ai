@@ -23,7 +23,7 @@ describe Rack::Attack do
     context 'when number of requests is lower than the limit' do
       it 'does not change the request status' do
         limit.times do
-          post '/pull_request_ai/prepare',
+          post 'rrtools/pull_request_ai/prepare',
             { pull_request_ai: { branch: 'test' } },
             'REMOTE_ADDR' => '1.2.3.9'
           expect(last_response.status).not_to(eq(429))
@@ -34,7 +34,7 @@ describe Rack::Attack do
     context 'when number of requests is higher than the limit' do
       it 'changes the request status to 429' do
         (limit * 2).times do |i|
-          post '/pull_request_ai/prepare',
+          post 'rrtools/pull_request_ai/prepare',
             { pull_request_ai: { branch: 'test' } },
             'REMOTE_ADDR' => '1.2.3.9'
           expect(last_response.status).to(eq(429)) if i > limit

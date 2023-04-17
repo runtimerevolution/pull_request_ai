@@ -11,6 +11,7 @@ module PullRequestAi
 
       attr_reader :open_ai_uri
       attr_reader :api_version
+      attr_reader :rrtools_grouped_gems
 
       def initialize
         @api_version = 'v1'
@@ -20,6 +21,14 @@ module PullRequestAi
         @temperature = 1
         @openai_api_key = ENV['OPENAI_API_KEY']
         @github_access_token = ENV['GITHUB_ACCESS_TOKEN']
+        @rrtools_grouped_gems = Rails.application.routes.routes.select do |prop|
+          prop.defaults[:group] == 'RRTools'
+        end.collect do |route|
+          {
+            name: route.name,
+            path: route.path.build_formatter.instance_variable_get('@parts').join
+          }
+        end || []
       end
     end
   end

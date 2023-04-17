@@ -5,11 +5,25 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/gh/runtimerevolution/rrtools/dist/assets/styleshhets/rrtools@1.0.0-d8d9aea14840c97f19edec7377493c8c.min.css'>
     <%= stylesheet_link_tag 'pull_request_ai/application', media: 'all' %>
   </head>
   <body>
-
-  <%= yield %>
-
+    <div class='wrapper'>
+      <% if PullRequestAi.configuration.rrtools_grouped_gems.size.positive? %>
+        <nav>
+          <header>RRTools</header>
+          <ul>
+            <li><span>Tools</span></li>
+            <% PullRequestAi.configuration.rrtools_grouped_gems.each do |menu| %>
+              <li class='active'><a href='<%= menu[:path] %>'><%= menu[:name].humanize %></a></li>
+            <% end %>
+          </ul>
+        </nav>
+      <% end %>
+      <main>
+        <%= yield %>
+      </main>
+    </div>
   </body>
 </html>
