@@ -12,6 +12,8 @@ module PullRequestAi
           )
 
           build_response_object(response)
+        rescue Net::ReadTimeout
+          Failure('Connection timeout')
         end
 
         private

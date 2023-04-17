@@ -65,6 +65,8 @@ module PullRequestAi
           errors = response.parsed_response['errors']&.map { |error| error['message'] }&.join(' ')
           errors.to_s.empty? ? Failure(:failed_on_github_api_endpoint) : Failure(errors)
         end
+      rescue Net::ReadTimeout
+        Failure('Connection timeout')
       end
 
       def build_url(slug, suffix = '')

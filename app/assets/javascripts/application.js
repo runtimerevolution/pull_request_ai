@@ -99,7 +99,7 @@ updatePrButton.onclick = () => {
 
   jsonPost('/rrtools/pull_request_ai/update', data).then(data => {
     hideSpinner();
-    console.log('cenas')
+
     if ('errors' in data) {
       errorField.textContent = data.errors;
     }
