@@ -8,6 +8,7 @@ module PullRequestAi
       attr_accessor :openai_api_key
       attr_accessor :model
       attr_accessor :temperature
+      attr_accessor :http_timeout
 
       attr_reader :open_ai_uri
       attr_reader :api_version
@@ -21,6 +22,7 @@ module PullRequestAi
         @temperature = 1
         @openai_api_key = ENV['OPENAI_API_KEY']
         @github_access_token = ENV['GITHUB_ACCESS_TOKEN']
+        @http_timeout = 60
         @rrtools_grouped_gems = Rails.application.routes.routes.select do |prop|
           prop.defaults[:group] == 'RRTools'
         end.collect do |route|

@@ -52,7 +52,7 @@ descriptionRequestButton.onclick = () => {
 
   lockSelectors();
 
-  jsonPost('pull_request_ai/prepare', data).then(data => {
+  jsonPost('prepare', data).then(data => {
     hideSpinner();
 
     if ('errors' in data) {
@@ -99,7 +99,7 @@ updatePrButton.onclick = () => {
 
   jsonPost('pull_request_ai/update', data).then(data => {
     hideSpinner();
-
+    console.log('cenas')
     if ('errors' in data) {
       errorField.textContent = data.errors;
     }

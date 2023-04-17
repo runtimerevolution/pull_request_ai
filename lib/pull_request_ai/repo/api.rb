@@ -7,6 +7,7 @@ module PullRequestAi
 
       attr_accessor :github_api_endpoint
       attr_accessor :github_access_token
+      attr_reader   :http_timeout
 
       def initialize(
         github_api_endpoint: nil,
@@ -14,6 +15,7 @@ module PullRequestAi
       )
         @github_api_endpoint = github_api_endpoint || PullRequestAi.github_api_endpoint
         @github_access_token = github_access_token || PullRequestAi.github_access_token
+        @http_timeout = PullRequestAi.http_timeout
       end
 
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-pull-requests
@@ -53,7 +55,10 @@ module PullRequestAi
       private
 
       def request(type, url, success_code, query, content)
-        response = HTTParty.send(type, url, headers: headers, query: query, body: content)
+        response = HTTParty.send(
+          type, url, headers: headers, query: query, body: content, timeout: http_timeout
+        )
+
         if response.code.to_i == success_code
           Success(response.parsed_response)
         else

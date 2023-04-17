@@ -29,7 +29,8 @@ module PullRequestAi
         HTTParty.post(
           build_uri,
           headers: headers,
-          body: body(content)
+          body: body(content),
+          timeout: PullRequestAi.http_timeout
         )
       end
 
