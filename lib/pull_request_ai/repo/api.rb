@@ -54,6 +54,7 @@ module PullRequestAi
 
       def request(type, url, success_code, query, content)
         response = HTTParty.send(type, url, headers: headers, query: query, body: content)
+
         if response.code.to_i == success_code
           Success(response.parsed_response)
         else

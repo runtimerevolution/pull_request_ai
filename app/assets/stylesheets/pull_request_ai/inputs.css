@@ -61,4 +61,5 @@ button:active {
 textarea {
   width: 760px;
   height: 270px;
+  resize: none;
 }
