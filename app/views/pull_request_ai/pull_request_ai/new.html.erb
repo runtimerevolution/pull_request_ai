@@ -22,7 +22,7 @@
 
   <%= hidden_field_tag 'open_pr_number', '' %>
 
-  <div class='mt-20'>
+  <div id='pr-title-container' class='mt-20'>
     <%= label_tag 'Pull Request Title:' %>
     <%= text_field_tag :pull_request_title, '', { id: 'pr-title-field', class: 'block mt-5' } %>
   </div>
@@ -34,13 +34,13 @@
     <%= text_area_tag :description, '', { id: 'description-field', class: 'block mt-5' } %>
   </div>
 
+  <%= button_tag 'Copy to Clipboard', { id: 'clipboard-btn', class: 'mt-5' } %>
+
+  <br>
+
   <div id='opened-pr-container' class='hide mt-20'>
   
-    <%= button_tag 'Copy suggestion to submission', { id: 'copy-suggestion-pr-btn', class: 'mt-20' } %>
-
-    <br>
-
-    <br>
+    <%= button_tag 'Copy suggestion to submission', { id: 'copy-suggestion-pr-btn', class: 'mb-20' } %>
 
     <div>
       <%= label_tag 'Description for Submission' %>
@@ -49,11 +49,13 @@
 
   </div>
 
-  <%= button_tag 'Reselect', { id: 'reselect-pr-btn', class: 'mt-20' } %>
+  <div id='actions-container' class='mt-20'>
+    <%= button_tag 'Reselect', { id: 'reselect-pr-btn', class: 'mt-20' } %>
 
-  <%= button_tag 'Create Pull Request', { id: 'create-pr-btn', class: 'mt-20' } %>
+    <%= button_tag 'Create Pull Request', { id: 'create-pr-btn', class: 'mt-20' } %>
 
-  <%= button_tag 'Update Pull Request', { id: 'update-pr-btn', class: 'mt-20' } %>
+    <%= button_tag 'Update Pull Request', { id: 'update-pr-btn', class: 'mt-20' } %>
+  </div>
 
   <p id='feedback-field' class='mt-20'/>
 </div>

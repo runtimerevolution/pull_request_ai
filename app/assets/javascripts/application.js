@@ -2,6 +2,7 @@ const descriptionRequestButton = document.getElementById('description-request-bt
 const copyPrButton = document.getElementById('copy-suggestion-pr-btn');
 const reselectPrButton = document.getElementById('reselect-pr-btn');
 const createPrButton = document.getElementById('create-pr-btn');
+const clipboardButton = document.getElementById('clipboard-btn');
 const updatePrButton = document.getElementById('update-pr-btn');
 
 const loadingContainer = document.getElementById('loading-container');
@@ -15,6 +16,7 @@ const prTitleField = document.getElementById('pr-title-field');
 const descriptionField = document.getElementById('description-field');
 const currentDescriptionField = document.getElementById('current-description-field');
 
+const titlePrContainer = document.getElementById('pr-title-container');
 const createPrContainer = document.getElementById('create-pr-container');
 const openedPrContainer = document.getElementById('opened-pr-container');
 
@@ -45,6 +47,16 @@ reselectPrButton.onclick = () => {
   feedbackField.textContent = '';
   unlockSelectors();
   disableSubmission();
+}
+
+clipboardButton.onclick = () => {
+  if (navigator.clipboard) {
+    var text = descriptionField.value;
+    navigator.clipboard.writeText(text);
+  } else {
+    descriptionField.select();
+    document.execCommand("copy");
+  }
 }
 
 descriptionRequestButton.onclick = () => {
@@ -132,6 +144,11 @@ function unlockSelectors() {
 function enableSubmission(data) {
   errorField.textContent = '';
   descriptionField.value = data.description;
+
+  titlePrContainer.classList.add('hide');
+  createPrButton.classList.add('hide');
+  updatePrButton.classList.add('hide');
+
   if (data.opened) {
     openPrNumber.value = data.opened.number;
     prTitleField.value = data.opened.title
@@ -139,8 +156,10 @@ function enableSubmission(data) {
     
     openedPrContainer.classList.remove('hide');
 
-    createPrButton.classList.add('hide');
-    updatePrButton.classList.remove('hide');
+    if (data.github_enabled) {
+      updatePrButton.classList.remove('hide');  
+      titlePrContainer.classList.remove('hide');  
+    }
   }
   else {
     openPrNumber.value = '';
@@ -149,8 +168,10 @@ function enableSubmission(data) {
 
     openedPrContainer.classList.add('hide');
 
-    createPrButton.classList.remove('hide');
-    updatePrButton.classList.add('hide');
+    if (data.github_enabled) {
+      createPrButton.classList.remove('hide');
+      titlePrContainer.classList.remove('hide');  
+    }
   }
   descriptionRequestButton.classList.add('hide');
   createPrContainer.classList.remove('hide');

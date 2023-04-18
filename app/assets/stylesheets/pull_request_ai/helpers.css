@@ -1,4 +1,6 @@
 .hide { display: none; }
 .block { display: block; }
 
+.mt-5 { margin-top: 5px; }
 .mt-20 { margin-top: 20px; }
+.mb-20 { margin-bottom: 20px; }
