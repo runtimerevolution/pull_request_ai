@@ -26,7 +26,7 @@
     <%= hidden_field_tag 'open_pr_number', '' %>
 
     <div id='pr-title-container' class='mt-20 mb-20'>
-      <%= label_tag :pr_title, 'Pull Request Title:' %>
+      <%= label_tag :pr_title, 'Pull Request Title' %>
       <%= text_field_tag :pull_request_title, '', { id: 'pr-title-field', class: 'block mt-5 fw' } %>
     </div>
 
@@ -56,7 +56,7 @@
       <%= button_tag 'Update Pull Request', { id: 'update-pr-btn', class: 'mt-20' } %>
     </div>
 
-    <p id='feedback-field' class='mt-20'/>
+    <p id='feedback-field' class='mt-20 green'/>
   </div>
 </div>
 
