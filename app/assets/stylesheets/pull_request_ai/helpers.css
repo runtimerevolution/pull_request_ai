@@ -1,6 +1,26 @@
 .hide { display: none; }
 .block { display: block; }
+.ib { display: inline-block; }
+.clear:after { content: ''; clear: both; display: block; }
+.right { float: right; }
 
 .mt-5 { margin-top: 5px; }
+.mb-5 { margin-bottom: 5px; }
+
+.mt-10 { margin-top: 10px; }
 .mt-20 { margin-top: 20px; }
 .mb-20 { margin-bottom: 20px; }
+.mb-50 { margin-bottom: 50px; }
+.mr-20 { margin-right: 20px; }
+
+.w-130 { width: 130px }
+.fw { width: 100% }
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.red { color: red; }
+.green { color: #3d898b; }

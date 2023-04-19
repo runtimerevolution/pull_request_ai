@@ -1,0 +1,65 @@
+
+input, select {
+  background: white;
+  border: 1px solid gray;
+  border-radius: 4px;
+  box-shadow: none;
+  color: black;
+  padding: 10px 12px;
+}
+
+button {
+  appearance: none;
+  background-color: #3d898b;
+  border: 1px solid rgba(27, 31, 35, .15);
+  border-radius: 6px;
+  box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  padding: 6px 16px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+button:focus:not(:focus-visible):not(.focus-visible) {
+  box-shadow: none;
+  outline: none;
+}
+
+button:hover {
+  background-color: #2D7072;
+}
+
+button:focus {
+  box-shadow: rgba(46, 164, 79, .4) 0 0 0 3px;
+  outline: none;
+}
+
+button:disabled {
+  background-color: #a0a0a0;
+  border-color: rgba(27, 31, 35, .1);
+  color: rgba(255, 255, 255, 0.594);
+  cursor: default;
+}
+
+button:active {
+  background-color: #2D7072;
+  box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
+}
+
+textarea {
+  width: 760px;
+  height: 270px;
+  resize: none;
+}
