@@ -28,6 +28,7 @@ module PullRequestAi
   def_delegators :configuration, :api_version
   def_delegators :configuration, :model, :model=
   def_delegators :configuration, :temperature, :temperature=
+  def_delegators :configuration, :http_timeout
 
   class << self
     def configure(&block)

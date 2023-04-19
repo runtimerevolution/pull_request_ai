@@ -5,6 +5,7 @@ module PullRequestAi
     # A client to access the OpenAI API.
     class Client
       attr_accessor :openai_api_key, :open_ai_uri, :api_version, :model, :temperature
+      attr_reader   :http_timeout
 
       ##
       # Initializes the Client
@@ -20,6 +21,7 @@ module PullRequestAi
         @api_version = api_version || PullRequestAi.api_version
         @model = model || PullRequestAi.model
         @temperature = temperature || PullRequestAi.temperature
+        @http_timeout = PullRequestAi.http_timeout
       end
 
       ##
@@ -29,7 +31,8 @@ module PullRequestAi
         HTTParty.post(
           build_uri,
           headers: headers,
-          body: body(content)
+          body: body(content),
+          timeout: http_timeout
         )
       end
 
