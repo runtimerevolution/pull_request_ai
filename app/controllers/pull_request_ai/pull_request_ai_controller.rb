@@ -15,8 +15,8 @@ module PullRequestAi
     end
 
     def prepare
-      client.ask_chat_description(pr_params[:branch], pr_params[:type]).fmap do |description|
-        client.current_opened_pull_requests_to(pr_params[:branch]).fmap do |open_prs|
+      client.ask_chat_description(prepare_params[:branch], prepare_params[:type]).fmap do |description|
+        client.current_opened_pull_requests_to(prepare_params[:branch]).fmap do |open_prs|
           if open_prs.empty?
             render(json: { description: description, github_enabled: true })
           else
@@ -73,6 +73,10 @@ module PullRequestAi
 
     def client
       @client ||= PullRequestAi::Client.new
+    end
+
+    def prepare_params
+      params.require(:pull_request_ai).permit(:branch, :type)
     end
 
     def pr_params

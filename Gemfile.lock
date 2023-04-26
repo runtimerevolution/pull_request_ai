@@ -6,7 +6,7 @@ PATH
       git_clone_url
       httparty
       rack-attack
-      rails (>= 7.0.4.3)
+      rails (>= 6.1.4)
 
 GEM
   remote: https://rubygems.org/

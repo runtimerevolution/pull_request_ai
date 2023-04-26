@@ -67,7 +67,7 @@ module PullRequestAi
         if prompt.configured? == false
           Failure(:project_not_configured)
         else
-          diff_output = prompt.configured? ? prompt.changes_between(branch1, branch2) : ''
+          diff_output = prompt.changes_between(branch1, branch2)
           changes = []
 
           file_name = nil
@@ -94,7 +94,11 @@ module PullRequestAi
             changes << PullRequestAi::Repo::File.new(file_name, modified_lines)
           end
 
-          Success(changes)
+          if changes.any? 
+            Success(changes)
+          else
+            Failure(:branch_without_changes)
+          end
         end
       end
     end
