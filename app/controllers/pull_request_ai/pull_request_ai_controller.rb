@@ -17,7 +17,10 @@ module PullRequestAi
     def prepare
       client.flatten_current_changes(prepare_params[:branch]).fmap do |changes|
         if changes.empty?
-          render(json: { notice: "No changes between branches. Please check the destination branch." }, status: :unprocessable_entity)
+          render(
+            json: { notice: 'No changes between branches. Please check the destination branch.' },
+            status: :unprocessable_entity
+          )
         else
           client.suggested_description(prepare_params[:type], changes).fmap do |description|
             response = { description: description }
