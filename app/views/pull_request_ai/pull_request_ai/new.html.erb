@@ -7,7 +7,7 @@
 
   <p id='notice-field' class='mt-20 yellow'></p>
 
-  <div>
+  <div id='prepare-pr-conainer' class=<%= 'hide' if @error_message %>>
     <div class='mt-20 mr-20 ib'>
       <%= label_tag :destination_branch, 'Destination Branch' %>
       <%= select_tag :branch, options_for_select(@branches || []), { id: 'branch-field', class: 'block mt-10' } %>
@@ -20,7 +20,11 @@
   </div>
 
   <div class='flex-center mt-20'>
-    <%= button_tag 'Next', { id: 'description-request-btn', class: 'mt-20' } %>
+    <%= button_tag 'Refresh', { id: 'reload-btn', class: "mt-20#{@error_message ? '' : ' hide'}" } %>
+  </div>
+
+  <div class='flex-center mt-20'>
+    <%= button_tag 'Next', { id: 'description-request-btn', class: "mt-20#{@error_message ? ' hide' : ''}" } %>
   </div>
 
   <div id='create-pr-container' class='hide mt-20'>
