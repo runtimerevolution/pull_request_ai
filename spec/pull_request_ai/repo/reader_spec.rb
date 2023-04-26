@@ -55,12 +55,12 @@ RSpec.describe(PullRequestAi::Repo::Reader) do
 
     it 'fails when getting the current changes to another branch' do
       client = described_class.new(prompt: prompt)
-      expect(client.current_changes_to('main').failure).to(eq(:project_not_configured))
+      expect(client.current_changes('main').failure).to(eq(:project_not_configured))
     end
 
     it 'fails when getting the flatten current changes to another branch' do
       client = described_class.new(prompt: prompt)
-      expect(client.flatten_current_changes_to('main').failure).to(eq(:project_not_configured))
+      expect(client.flatten_current_changes('main').failure).to(eq(:project_not_configured))
     end
   end
 
@@ -156,32 +156,32 @@ index 52e12f6..4279e70 100644
 
     it 'ignores the Gemfile.lock file' do
       client = described_class.new(prompt: prompt)
-      result = client.current_changes_to('main').value!
+      result = client.current_changes('main').value!
       expect(result.count).to(eq(1))
       expect(result.first.name).not_to(be('Gemfile.lock'))
     end
 
     it 'returns a list of File objects with the line changes' do
       client = described_class.new(prompt: prompt)
-      result = client.current_changes_to('main').value!
+      result = client.current_changes('main').value!
       expect(result.first.modified_lines.count).to(eq(6))
     end
 
     it 'returns a text of the line changed' do
       client = described_class.new(prompt: prompt)
-      result = client.flatten_current_changes_to('main').value!
+      result = client.flatten_current_changes('main').value!
       expect(result).not_to(be_empty)
     end
 
     it 'returns a text of the line changed without the Gemfile.lock' do
       client = described_class.new(prompt: prompt)
-      result = client.flatten_current_changes_to('main').value!
+      result = client.flatten_current_changes('main').value!
       expect(result).not_to(include('Gemfile.lock'))
     end
 
     it 'returns a text of the line changed for pull_request_ai_controller.rb' do
       client = described_class.new(prompt: prompt)
-      result = client.flatten_current_changes_to('main').value!
+      result = client.flatten_current_changes('main').value!
       expect(result).to(start_with('app/controllers/engine/pull_request_ai_controller.rb'))
     end
   end

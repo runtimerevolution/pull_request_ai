@@ -9,6 +9,7 @@ const loadingContainer = document.getElementById('loading-container');
 const openPrNumber = document.getElementById('open_pr_number');
 
 const errorField = document.getElementById('error-field');
+const noticeField = document.getElementById('notice-field');
 const feedbackField = document.getElementById('feedback-field');
 const branchField = document.getElementById('branch-field');
 const typeField = document.getElementById('type-field');
@@ -66,11 +67,9 @@ descriptionRequestButton.onclick = () => {
 
   jsonPost('/rrtools/pull_request_ai/prepare', data).then(data => {
     hideSpinner();
-
-    if ('errors' in data) {
-      errorField.textContent = data.errors;
+    if (setErrorsOrNoticeIfNeeded(data)) {
       unlockSelectors();
-    }
+    } 
     else {
       enableSubmission(data);
     }
@@ -92,11 +91,7 @@ createPrButton.onclick = () => {
 
   jsonPost('/rrtools/pull_request_ai/create', data).then(data => {
     hideSpinner();
-
-    if ('errors' in data) {
-      errorField.textContent = data.errors;
-    }
-    else {
+    if (setErrorsOrNoticeIfNeeded(data) == false) {
       feedbackField.textContent = 'Pull Request created successfully';
     }
   }).catch(errorMsg => {
@@ -111,11 +106,7 @@ updatePrButton.onclick = () => {
 
   jsonPost('/rrtools/pull_request_ai/update', data).then(data => {
     hideSpinner();
-
-    if ('errors' in data) {
-      errorField.textContent = data.errors;
-    }
-    else {
+    if (setErrorsOrNoticeIfNeeded(data) == false) {
       feedbackField.textContent = 'Pull Request updated successfully';
     }
   }).catch(errorMsg => {
@@ -141,6 +132,24 @@ function unlockSelectors() {
   typeField.removeAttribute('disabled');
 }
 
+function clearErrorsAndNoticeIfNeeded() {
+  errorField.textContent = '';
+  noticeField.textContent = '';
+}
+
+function setErrorsOrNoticeIfNeeded(data) {
+  clearErrorsAndNoticeIfNeeded();
+  if ('errors' in data) {
+    errorField.textContent = data.errors;
+    return true;
+  }
+  else if ('notice' in data) {
+    noticeField.textContent = data.notice;
+    return true;
+  }
+  return false;
+}
+
 function enableSubmission(data) {
   errorField.textContent = '';
   descriptionField.value = data.description;
@@ -149,10 +158,10 @@ function enableSubmission(data) {
   createPrButton.classList.add('hide');
   updatePrButton.classList.add('hide');
 
-  if (data.opened) {
-    openPrNumber.value = data.opened.number;
-    prTitleField.value = data.opened.title
-    currentDescriptionField.value = data.opened.description
+  if (data.open_pr) {
+    openPrNumber.value = data.open_pr.number;
+    prTitleField.value = data.open_pr.title
+    currentDescriptionField.value = data.open_pr.description
     
     openedPrContainer.classList.remove('hide');
 

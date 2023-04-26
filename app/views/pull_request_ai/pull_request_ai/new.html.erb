@@ -5,6 +5,8 @@
     <%= @error_message %>
   </p>
 
+  <p id='notice-field' class='mt-20 yellow'></p>
+
   <div>
     <div class='mt-20 mr-20 ib'>
       <%= label_tag :destination_branch, 'Destination Branch' %>
@@ -18,7 +20,7 @@
   </div>
 
   <div class='flex-center mt-20'>
-    <%= button_tag 'Confirm', { id: 'description-request-btn', class: 'mt-20' } %>
+    <%= button_tag 'Next', { id: 'description-request-btn', class: 'mt-20' } %>
   </div>
 
   <div id='create-pr-container' class='hide mt-20'>

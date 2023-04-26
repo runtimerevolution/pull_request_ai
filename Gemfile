@@ -7,5 +7,13 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 gemspec
 
 gem 'sprockets-rails'
+gem 'rspec-rails'
+
 gem 'puma'
+
 gem 'dotenv'
+gem 'byebug'
+
+gem 'rubocop'
+gem 'rubocop-rspec'
+gem 'rubocop-shopify'
