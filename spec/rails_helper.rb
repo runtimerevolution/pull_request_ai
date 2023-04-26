@@ -7,7 +7,6 @@ require_relative '../spec/dummy/config/environment'
 # Prevent database truncation if the environment is production
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
-require 'pry'
 require 'dry/monads'
 
 # Add additional requires below this line. Rails is not loaded until this point!

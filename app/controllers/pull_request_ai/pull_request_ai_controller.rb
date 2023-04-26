@@ -9,8 +9,8 @@ module PullRequestAi
 
       client.destination_branches.fmap do |branches|
         @branches = branches
-      end.or do |_|
-        @error_message = "Your project doesn't have a repository configured."
+      end.or do |error|
+        @error_message = error
       end
     end
 

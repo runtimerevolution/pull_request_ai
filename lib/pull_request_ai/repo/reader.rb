@@ -44,7 +44,11 @@ module PullRequestAi
       def destination_branches
         current_branch.bind do |current|
           remote_branches.bind do |branches|
-            Success(branches.reject { _1 == current || _1.start_with?('HEAD') })
+            if branches.include?(current)
+              Success(branches.reject { _1 == current || _1.start_with?('HEAD') })
+            else
+              Failure(:current_branch_not_pushed)
+            end
           end
         end
       end
