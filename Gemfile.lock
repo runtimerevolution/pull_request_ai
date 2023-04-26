@@ -78,7 +78,7 @@ GEM
       tzinfo (~> 2.0)
     ast (2.4.2)
     builder (3.2.4)
-    coderay (1.1.3)
+    byebug (11.1.3)
     concurrent-ruby (1.2.2)
     crass (1.0.6)
     date (3.3.3)
@@ -132,9 +132,6 @@ GEM
     parallel (1.22.1)
     parser (3.2.2.0)
       ast (~> 2.4.1)
-    pry (0.14.2)
-      coderay (~> 1.1)
-      method_source (~> 1.0)
     puma (6.2.1)
       nio4r (~> 2.0)
     racc (1.6.2)
@@ -233,8 +230,8 @@ PLATFORMS
   x86_64-darwin-22
 
 DEPENDENCIES
+  byebug
   dotenv
-  pry
   pull_request_ai!
   puma
   rspec-rails
