@@ -49,14 +49,14 @@ module PullRequestAi
         end
       end
 
-      def current_changes_to(base)
+      def current_changes(to_base)
         current_branch.bind do |current|
-          changes_between(base, current)
+          changes_between(to_base, current)
         end
       end
 
-      def flatten_current_changes_to(base)
-        current_changes_to(base).bind do |changes|
+      def flatten_current_changes(to_base)
+        current_changes(to_base).bind do |changes|
           Success(changes.inject(''.dup) { |result, file| result << file.trimmed_modified_lines })
         end
       end
@@ -94,11 +94,7 @@ module PullRequestAi
             changes << PullRequestAi::Repo::File.new(file_name, modified_lines)
           end
 
-          if changes.any? 
-            Success(changes)
-          else
-            Failure(:branch_without_changes)
-          end
+          Success(changes)
         end
       end
     end

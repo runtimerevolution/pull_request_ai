@@ -15,24 +15,30 @@ module PullRequestAi
     end
 
     def prepare
-      client.ask_chat_description(prepare_params[:branch], prepare_params[:type]).fmap do |description|
-        client.current_opened_pull_requests_to(prepare_params[:branch]).fmap do |open_prs|
-          if open_prs.empty?
-            render(json: { description: description, github_enabled: true })
-          else
-            open_pr = open_prs.first
-            render(json: {
-              description: description,
-              github_enabled: true,
-              opened: {
-                number: open_pr['number'],
-                title: open_pr['title'],
-                description: open_pr['body']
-              }
-            })
+      client.flatten_current_changes(prepare_params[:branch]).fmap do |changes|
+        if changes.empty?
+          render(json: { notice: "No changes between branches. Please check the destination branch." }, status: :unprocessable_entity)
+        else
+          client.suggested_description(prepare_params[:type], changes).fmap do |description|
+            response = { description: description }
+            client.current_opened_pull_requests(prepare_params[:branch]).fmap do |open_prs|
+              response[:github_enabled] = true
+              open_pr = open_prs.first
+              if open_pr
+                response[:open_pr] = {
+                  number: open_pr['number'],
+                  title: open_pr['title'],
+                  description: open_pr['body']
+                }
+              end
+              render(json: response)
+            end.or do |_|
+              response[:github_enabled] = false
+              render(json: response)
+            end
+          end.or do |error|
+            render(json: { errors: error }, status: :unprocessable_entity)
           end
-        end.or do |_|
-          render(json: { description: description, github_enabled: false })
         end
       end.or do |error|
         render(json: { errors: error }, status: :unprocessable_entity)
@@ -40,7 +46,7 @@ module PullRequestAi
     end
 
     def create
-      result = client.open_pull_request_to(
+      result = client.open_pull_request(
         pr_params[:branch],
         pr_params[:title],
         pr_params[:description]

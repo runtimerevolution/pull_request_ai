@@ -28,7 +28,7 @@ module PullRequestAi
       @repo_api ||= PullRequestAi::Repo::Api.new
     end
 
-    def current_opened_pull_requests_to(base)
+    def current_opened_pull_requests(base)
       repo_reader.repository_slug.bind do |slug|
         repo_reader.current_branch.bind do |branch|
           repo_api.opened_pull_requests(slug, branch, base)
@@ -40,10 +40,10 @@ module PullRequestAi
       repo_reader.destination_branches
     end
 
-    def open_pull_request_to(base, title, description)
+    def open_pull_request(to_base, title, description)
       repo_reader.repository_slug.bind do |slug|
         repo_reader.current_branch.bind do |branch|
-          repo_api.open_pull_request(slug, branch, base, title, description)
+          repo_api.open_pull_request(slug, branch, to_base, title, description)
         end
       end
     end
@@ -54,10 +54,12 @@ module PullRequestAi
       end
     end
 
-    def ask_chat_description(to_branch, type)
-      repo_reader.flatten_current_changes_to(to_branch).bind do |changes|
-        PullRequestAi::OpenAi::Interpreter.chat!(type, changes)
-      end
+    def flatten_current_changes(to_branch)
+      repo_reader.flatten_current_changes(to_branch)
+    end
+
+    def suggested_description(type, changes)
+      PullRequestAi::OpenAi::Interpreter.chat!(type, changes)
     end
   end
 end
