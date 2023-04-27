@@ -19,7 +19,7 @@ module PullRequestAi
         @openai_api_endpoint = 'https://api.openai.com'
         @github_api_endpoint = 'https://api.github.com'
         @model = 'gpt-3.5-turbo'
-        @temperature = 1
+        @temperature = 0.8
         @openai_api_key = ENV['OPENAI_API_KEY']
         @github_access_token = ENV['GITHUB_ACCESS_TOKEN']
         @http_timeout = 60
