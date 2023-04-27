@@ -24,14 +24,22 @@ module PullRequestAi
       @repo_reader ||= PullRequestAi::Repo::Reader.new
     end
 
-    def repo_api
-      @repo_api ||= PullRequestAi::Repo::Api.new
+    def repo_client
+      @repo_client ||= PullRequestAi::Repo::Client.new
+    end
+
+    def ai_client
+      @ai_client ||= PullRequestAi::OpenAi::Client.new
+    end
+
+    def ai_interpreter
+      @ai_interpreter ||= PullRequestAi::OpenAi::Interpreter.new
     end
 
     def current_opened_pull_requests(base)
       repo_reader.repository_slug.bind do |slug|
         repo_reader.current_branch.bind do |branch|
-          repo_api.opened_pull_requests(slug, branch, base)
+          repo_client.opened_pull_requests(slug, branch, base)
         end
       end
     end
@@ -43,14 +51,14 @@ module PullRequestAi
     def open_pull_request(to_base, title, description)
       repo_reader.repository_slug.bind do |slug|
         repo_reader.current_branch.bind do |branch|
-          repo_api.open_pull_request(slug, branch, to_base, title, description)
+          repo_client.open_pull_request(slug, branch, to_base, title, description)
         end
       end
     end
 
     def update_pull_request(number, base, title, description)
       repo_reader.repository_slug.bind do |slug|
-        repo_api.update_pull_request(slug, number, base, title, description)
+        repo_client.update_pull_request(slug, number, base, title, description)
       end
     end
 
@@ -59,7 +67,8 @@ module PullRequestAi
     end
 
     def suggested_description(type, changes)
-      PullRequestAi::OpenAi::Interpreter.chat!(type, changes)
+      chat_message = ai_interpreter.chat_message(type, changes)
+      ai_client.predicted_completions(chat_message)
     end
   end
 end
