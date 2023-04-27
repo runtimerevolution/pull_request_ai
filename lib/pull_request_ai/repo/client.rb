@@ -43,14 +43,14 @@ module PullRequestAi
       # We don't have logic to change the base on the UI.
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#update-a-pull-request
       def update_pull_request(slug, number, base, title, description)
-        content = {
+        body = {
           title: title,
           body: description,
           state: 'open',
           base: base
         }.to_json
         url = build_url(slug, "/#{number}")
-        request(:patch, url, {}, content)
+        request(:patch, url, {}, body)
       end
 
       ##
@@ -59,21 +59,21 @@ module PullRequestAi
       # It requires the head (destination branch), base (current branch), a title, and a description.
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#create-a-pull-request
       def open_pull_request(slug, head, base, title, description)
-        content = {
+        body = {
           title: title,
           body: description,
           head: head,
           base: base
         }.to_json
         url = build_url(slug)
-        request(:post, url, {}, content)
+        request(:post, url, {}, body)
       end
 
       private
 
-      def request(type, url, query, content)
+      def request(type, url, query, body)
         response = HTTParty.send(
-          type, url, headers: headers, query: query, body: content, timeout: http_timeout
+          type, url, headers: headers, query: query, body: body, timeout: http_timeout
         )
 
         if response.success?

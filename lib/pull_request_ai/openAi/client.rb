@@ -32,16 +32,27 @@ module PullRequestAi
       # Makes the completions request from the OpenAI API.
       # Given a prompt, the model will return one or more predicted completions.
       # https://platform.openai.com/docs/api-reference/chat
-      def request_completions(content: '')
-        HTTParty.post(
-          build_url,
-          headers: headers,
-          body: body(content),
-          timeout: http_timeout
-        )
+      def predicted_completions(content: '')
+        url = build_url
+        request(:post, url, body(content))
       end
 
       private
+
+      def request(type, url, body)
+        response = HTTParty.send(
+          type, url, headers: headers, body: body, timeout: http_timeout
+        )
+        body = response.parsed_response
+
+        if response.success?
+          Dry::Monads::Success(body['choices'].first.dig('message', 'content'))
+        else
+          Error.failure(:failed_on_openai_api_endpoint, body.dig('error', 'message'))
+        end
+      rescue Net::ReadTimeout
+        Error.failure(:connection_timeout)
+      end
 
       def build_url
         "#{openai_api_endpoint}/#{api_version}/chat/completions"

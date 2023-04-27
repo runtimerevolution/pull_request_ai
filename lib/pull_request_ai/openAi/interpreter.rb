@@ -7,13 +7,9 @@ module PullRequestAi
         include Dry::Monads[:result, :do]
 
         def chat!(feature_type, current_changes)
-          response = PullRequestAi::OpenAi::Client.new.request_completions(
+          PullRequestAi::OpenAi::Client.new.predicted_completions(
             content: build_chat_message(feature_type, current_changes)
           )
-
-          build_response_object(response)
-        rescue Net::ReadTimeout
-          Error.failure(:connection_timeout)
         end
 
         private
@@ -25,15 +21,6 @@ module PullRequestAi
           ).squish
         end
 
-        def build_response_object(response)
-          body = response.parsed_response
-
-          if response.success?
-            Success(body['choices'].first.dig('message', 'content'))
-          else
-            Error.failure(:failed_on_openai_api_endpoint, body.dig('error', 'message'))
-          end
-        end
       end
     end
   end
