@@ -27,9 +27,9 @@ RSpec.describe(PullRequestAi::Util::Configuration) do
     expect(config.temperature).to(eq(0.8))
   end
 
-  it 'has a fixed open_ai_uri attribute' do
+  it 'has a fixed openai_api_endpoint attribute' do
     config = described_class.new
-    expect(config.open_ai_uri).to(eq('https://api.openai.com'))
+    expect(config.openai_api_endpoint).to(eq('https://api.openai.com'))
   end
 
   it 'has a fixed github_api_endpoint attribute' do

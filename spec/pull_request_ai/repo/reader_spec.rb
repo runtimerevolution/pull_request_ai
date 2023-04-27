@@ -30,37 +30,37 @@ RSpec.describe(PullRequestAi::Repo::Reader) do
 
     it 'fails when getting current branch' do
       client = described_class.new(prompt: prompt)
-      expect(client.current_branch.failure).to(eq(:project_not_configured))
+      expect(client.current_branch.failure.symbol).to(eq(:project_not_configured))
     end
 
     it 'fails when getting remote name' do
       client = described_class.new(prompt: prompt)
-      expect(client.remote_name.failure).to(eq(:project_not_configured))
+      expect(client.remote_name.failure.symbol).to(eq(:project_not_configured))
     end
 
     it 'fails when getting the repository slug' do
       client = described_class.new(prompt: prompt)
-      expect(client.repository_slug.failure).to(eq(:project_not_configured))
+      expect(client.repository_slug.failure.symbol).to(eq(:project_not_configured))
     end
 
     it 'fails when getting the remote branches' do
       client = described_class.new(prompt: prompt)
-      expect(client.remote_branches.failure).to(eq(:project_not_configured))
+      expect(client.remote_branches.failure.symbol).to(eq(:project_not_configured))
     end
 
     it 'fails when getting the available destination branches' do
       client = described_class.new(prompt: prompt)
-      expect(client.destination_branches.failure).to(eq(:project_not_configured))
+      expect(client.destination_branches.failure.symbol).to(eq(:project_not_configured))
     end
 
     it 'fails when getting the current changes to another branch' do
       client = described_class.new(prompt: prompt)
-      expect(client.current_changes('main').failure).to(eq(:project_not_configured))
+      expect(client.current_changes('main').failure.symbol).to(eq(:project_not_configured))
     end
 
     it 'fails when getting the flatten current changes to another branch' do
       client = described_class.new(prompt: prompt)
-      expect(client.flatten_current_changes('main').failure).to(eq(:project_not_configured))
+      expect(client.flatten_current_changes('main').failure.symbol).to(eq(:project_not_configured))
     end
   end
 
@@ -141,7 +141,7 @@ index 52e12f6..4279e70 100644
     it 'fails from an invalid url' do
       allow(prompt).to(receive(:remote_url).with('origin').and_return('runtimerevolution/pull_request_ai.git'))
       client = described_class.new(prompt: prompt)
-      expect(client.repository_slug.failure).to(eq(:invalid_repository))
+      expect(client.repository_slug.failure.symbol).to(eq(:invalid_repository_url))
     end
 
     it 'returns a list of text branches only from the remote and ignore local branches' do

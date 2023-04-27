@@ -48,7 +48,7 @@ Using the gem initializer you have access to aditional configurations which are 
 ```ruby
 PullRequestAi.configure do |config|
   ...
-  config.open_ai_uri = 'https://api.openai.com'
+  config.openai_api_endpoint = 'https://api.openai.com'
   config.github_api_endpoint = 'https://api.github.com'
   config.model = 'gpt-3.5-turbo'
   config.temperature = 1
