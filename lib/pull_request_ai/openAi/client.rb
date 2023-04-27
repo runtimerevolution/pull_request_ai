@@ -32,7 +32,7 @@ module PullRequestAi
       # Makes the completions request from the OpenAI API.
       # Given a prompt, the model will return one or more predicted completions.
       # https://platform.openai.com/docs/api-reference/chat
-      def predicted_completions(content: '')
+      def predicted_completions(content)
         url = build_url
         request(:post, url, body(content))
       end

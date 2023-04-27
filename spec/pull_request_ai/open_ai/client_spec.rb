@@ -78,16 +78,16 @@ RSpec.describe(PullRequestAi::OpenAi::Client) do
       end
 
       before { allow(HTTParty).to(receive(:post).and_return(invalid_http_response)) }
-      
-      it 'builds and returns an invalid response object' do
-          response = client.predicted_completions(content: 'new chat')
 
-          expect(HTTParty).to(have_received(:post).with(any_args))
-          expect(response).to(be_failure)
-          expect(response).not_to(be_success)
-          expect(response.failure.symbol).to(eq(:failed_on_openai_api_endpoint))
-          expect(response.failure.message).to(eq(error_body.dig('error', 'message')))
-        end
+      it 'builds and returns an invalid response object' do
+        response = client.predicted_completions(content: 'new chat')
+
+        expect(HTTParty).to(have_received(:post).with(any_args))
+        expect(response).to(be_failure)
+        expect(response).not_to(be_success)
+        expect(response.failure.symbol).to(eq(:failed_on_openai_api_endpoint))
+        expect(response.failure.message).to(eq(error_body.dig('error', 'message')))
+      end
     end
 
     context 'with valid request' do
