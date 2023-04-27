@@ -53,7 +53,8 @@ RSpec.describe(PullRequestAi::OpenAi::Interpreter) do
 
         expect(translator).to(be_failure)
         expect(translator).not_to(be_success)
-        expect(translator.failure).to(eq(error_body.dig('error', 'message')))
+        expect(translator.failure.symbol).to(eq(:failed_on_openai_api_endpoint))
+        expect(translator.failure.message).to(eq(error_body.dig('error', 'message')))
       end
     end
 

@@ -11,6 +11,9 @@ require 'pull_request_ai/version'
 require 'pull_request_ai/engine'
 
 require 'pull_request_ai/util/configuration'
+require 'pull_request_ai/util/symbol_details'
+require 'pull_request_ai/util/error'
+
 require 'pull_request_ai/openAi/client'
 require 'pull_request_ai/openAi/interpreter'
 
@@ -24,7 +27,7 @@ module PullRequestAi
   def_delegators :configuration, :github_api_endpoint
   def_delegators :configuration, :github_access_token, :github_access_token=
   def_delegators :configuration, :openai_api_key, :openai_api_key=
-  def_delegators :configuration, :open_ai_uri
+  def_delegators :configuration, :openai_api_endpoint
   def_delegators :configuration, :api_version
   def_delegators :configuration, :model, :model=
   def_delegators :configuration, :temperature, :temperature=

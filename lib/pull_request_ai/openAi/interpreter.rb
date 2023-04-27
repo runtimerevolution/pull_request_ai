@@ -13,7 +13,7 @@ module PullRequestAi
 
           build_response_object(response)
         rescue Net::ReadTimeout
-          Failure('Connection timeout')
+          Error.failure(:connection_timeout)
         end
 
         private
@@ -31,7 +31,7 @@ module PullRequestAi
           if response.success?
             Success(body['choices'].first.dig('message', 'content'))
           else
-            Failure(body.dig('error', 'message'))
+            Error.failure(:failed_on_openai_api_endpoint, body.dig('error', 'message'))
           end
         end
       end

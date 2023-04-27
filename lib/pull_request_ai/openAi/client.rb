@@ -4,20 +4,24 @@ module PullRequestAi
   module OpenAi
     # A client to access the OpenAI API.
     class Client
-      attr_accessor :openai_api_key, :open_ai_uri, :api_version, :model, :temperature
+      attr_accessor :openai_api_key
+      attr_accessor :openai_api_endpoint
+      attr_accessor :api_version
+      attr_accessor :model
+      attr_accessor :temperature
       attr_reader   :http_timeout
 
       ##
       # Initializes the Client
       def initialize(
         openai_api_key: nil,
-        open_ai_uri: nil,
+        openai_api_endpoint: nil,
         api_version: nil,
         model: nil,
         temperature: nil
       )
         @openai_api_key = openai_api_key || PullRequestAi.openai_api_key
-        @open_ai_uri = open_ai_uri || PullRequestAi.open_ai_uri
+        @openai_api_endpoint = openai_api_endpoint || PullRequestAi.openai_api_endpoint
         @api_version = api_version || PullRequestAi.api_version
         @model = model || PullRequestAi.model
         @temperature = temperature || PullRequestAi.temperature
@@ -39,7 +43,7 @@ module PullRequestAi
       private
 
       def build_uri
-        "#{open_ai_uri}/#{api_version}/chat/completions"
+        "#{openai_api_endpoint}/#{api_version}/chat/completions"
       end
 
       def headers

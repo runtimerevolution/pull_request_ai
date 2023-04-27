@@ -6,7 +6,7 @@ module PullRequestAi
       github_api_endpoint: nil,
       github_access_token: nil,
       openai_api_key: nil,
-      open_ai_uri: nil,
+      openai_api_endpoint: nil,
       api_version: nil,
       model: nil,
       temperature: nil
@@ -14,7 +14,7 @@ module PullRequestAi
       PullRequestAi.configuration.github_api_endpoint = github_api_endpoint if github_api_endpoint
       PullRequestAi.configuration.github_access_token = github_access_token if github_access_token
       PullRequestAi.configuration.openai_api_key = openai_api_key if openai_api_key
-      PullRequestAi.configuration.open_ai_uri = open_ai_uri if open_ai_uri
+      PullRequestAi.configuration.openai_api_endpoint = openai_api_endpoint if openai_api_endpoint
       PullRequestAi.configuration.api_version = api_version if api_version
       PullRequestAi.configuration.model = model if model
       PullRequestAi.configuration.temperature = temperature if temperature

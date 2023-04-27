@@ -4,6 +4,7 @@ const reselectPrButton = document.getElementById('reselect-pr-btn');
 const createPrButton = document.getElementById('create-pr-btn');
 const clipboardButton = document.getElementById('clipboard-btn');
 const updatePrButton = document.getElementById('update-pr-btn');
+const reloadButton = document.getElementById('reload-btn');
 
 const loadingContainer = document.getElementById('loading-container');
 const openPrNumber = document.getElementById('open_pr_number');
@@ -44,10 +45,12 @@ async function jsonPost(path, data) {
   return await response.json();
 }
 
+reloadButton.onclick = () => {
+  window.location.reload();
+}
+
 reselectPrButton.onclick = () => {
-  feedbackField.textContent = '';
-  unlockSelectors();
-  disableSubmission();
+  window.location.reload();
 }
 
 clipboardButton.onclick = () => {

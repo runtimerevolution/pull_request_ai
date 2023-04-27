@@ -3,7 +3,7 @@
 module PullRequestAi
   module Repo
     class Reader
-      include Dry::Monads[:result, :do]
+      include Dry::Monads[:result]
 
       attr_accessor :prompt
 
@@ -12,11 +12,11 @@ module PullRequestAi
       end
 
       def current_branch
-        prompt.configured? ? Success(prompt.current_branch) : Failure(:project_not_configured)
+        prompt.configured? ? Success(prompt.current_branch) : Error.failure(:project_not_configured)
       end
 
       def remote_name
-        prompt.configured? ? Success(prompt.remote_name) : Failure(:project_not_configured)
+        prompt.configured? ? Success(prompt.remote_name) : Error.failure(:project_not_configured)
       end
 
       def repository_slug
@@ -25,10 +25,10 @@ module PullRequestAi
           regex = %r{\A/?(?<slug>.*?)(?:\.git)?\Z}
           uri = GitCloneUrl.parse(url)
           match = regex.match(uri.path)
-          match ? Success(match[:slug]) : Failure(:invalid_repository)
+          match ? Success(match[:slug]) : Error.failure(:invalid_repository_url)
         end
       rescue URI::InvalidComponentError
-        Failure(:invalid_repository)
+        Error.failure(:invalid_repository_url)
       end
 
       def remote_branches
@@ -47,7 +47,7 @@ module PullRequestAi
             if branches.include?(current)
               Success(branches.reject { _1 == current || _1.start_with?('HEAD') })
             else
-              Failure(:current_branch_not_pushed)
+              Error.failure(:current_branch_not_pushed)
             end
           end
         end
@@ -69,7 +69,7 @@ module PullRequestAi
 
       def changes_between(branch1, branch2)
         if prompt.configured? == false
-          Failure(:project_not_configured)
+          Error.failure(:project_not_configured)
         else
           diff_output = prompt.changes_between(branch1, branch2)
           changes = []

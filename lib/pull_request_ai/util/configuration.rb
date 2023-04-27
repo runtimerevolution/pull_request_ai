@@ -10,13 +10,13 @@ module PullRequestAi
       attr_accessor :temperature
       attr_accessor :http_timeout
 
-      attr_reader :open_ai_uri
+      attr_reader :openai_api_endpoint
       attr_reader :api_version
       attr_reader :rrtools_grouped_gems
 
       def initialize
         @api_version = 'v1'
-        @open_ai_uri = 'https://api.openai.com'
+        @openai_api_endpoint = 'https://api.openai.com'
         @github_api_endpoint = 'https://api.github.com'
         @model = 'gpt-3.5-turbo'
         @temperature = 1
