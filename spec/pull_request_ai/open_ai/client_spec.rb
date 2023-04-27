@@ -61,12 +61,14 @@ RSpec.describe(PullRequestAi::OpenAi::Client) do
 
   describe '.request' do
     before do
-      allow(HTTParty).to(receive(:post).and_return(fake_http_response))
+      allow(HTTParty).to(receive(:send).and_return(fake_http_response))
+      allow(fake_http_response).to(receive(:parsed_response)).and_return({})
+      allow(fake_http_response).to(receive(:success?)).and_return(true)
     end
 
     it 'sends user content to httparty request' do
-      client.request(content: 'new chat')
-      expect(HTTParty).to(have_received(:post).with(any_args))
+      client.predicted_completions(content: 'new chat')
+      expect(HTTParty).to(have_received(:send).with(any_args))
     end
   end
 end

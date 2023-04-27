@@ -46,7 +46,11 @@ module PullRequestAi
         body = response.parsed_response
 
         if response.success?
-          Dry::Monads::Success(body['choices'].first.dig('message', 'content'))
+          if body['choices'].nil? || body['choices'].empty?
+            Dry::Monads::Success('')
+          else
+            Dry::Monads::Success(body['choices'].first.dig('message', 'content'))
+          end
         else
           Error.failure(:failed_on_openai_api_endpoint, body.dig('error', 'message'))
         end

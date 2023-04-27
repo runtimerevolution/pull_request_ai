@@ -20,7 +20,6 @@ module PullRequestAi
             based on the following changes: #{current_changes}
           ).squish
         end
-
       end
     end
   end

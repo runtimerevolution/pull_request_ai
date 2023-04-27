@@ -51,8 +51,8 @@ RSpec.describe(PullRequestAi::Repo::Client) do
 
     before do
       allow(HTTParty).to(receive(:send).and_return(fake_http_response))
-      allow(fake_http_response).to(receive(:code)).and_return(200)
       allow(fake_http_response).to(receive(:parsed_response)).and_return({})
+      allow(fake_http_response).to(receive(:success?)).and_return(true)
     end
 
     it 'sends user content to httparty request' do
@@ -67,8 +67,8 @@ RSpec.describe(PullRequestAi::Repo::Client) do
 
     before do
       allow(HTTParty).to(receive(:send).and_return(fake_http_response))
-      allow(fake_http_response).to(receive(:code)).and_return(200)
       allow(fake_http_response).to(receive(:parsed_response)).and_return({})
+      allow(fake_http_response).to(receive(:success?)).and_return(true)
     end
 
     it 'sends user content to httparty request' do
@@ -83,8 +83,8 @@ RSpec.describe(PullRequestAi::Repo::Client) do
 
     before do
       allow(HTTParty).to(receive(:send).and_return(fake_http_response))
-      allow(fake_http_response).to(receive(:code)).and_return(201)
       allow(fake_http_response).to(receive(:parsed_response)).and_return({})
+      allow(fake_http_response).to(receive(:success?)).and_return(true)
     end
 
     it 'sends user content to httparty request' do
