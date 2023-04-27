@@ -4,8 +4,6 @@ module PullRequestAi
   module Repo
     # A client to communicate with the GitHub API.
     class Client
-      include Dry::Monads[:result]
-
       attr_accessor :github_api_endpoint
       attr_accessor :github_access_token
       attr_reader   :http_timeout
@@ -34,7 +32,7 @@ module PullRequestAi
           base: base
         }
         url = build_url(slug)
-        request(:get, url, 200, query, {})
+        request(:get, url, query, {})
       end
 
       ##
@@ -52,7 +50,7 @@ module PullRequestAi
           base: base
         }.to_json
         url = build_url(slug, "/#{number}")
-        request(:patch, url, 200, {}, content)
+        request(:patch, url, {}, content)
       end
 
       ##
@@ -68,18 +66,18 @@ module PullRequestAi
           base: base
         }.to_json
         url = build_url(slug)
-        request(:post, url, 201, {}, content)
+        request(:post, url, {}, content)
       end
 
       private
 
-      def request(type, url, success_code, query, content)
+      def request(type, url, query, content)
         response = HTTParty.send(
           type, url, headers: headers, query: query, body: content, timeout: http_timeout
         )
 
-        if response.code.to_i == success_code
-          Success(response.parsed_response)
+        if response.success?
+          Dry::Monads::Success(response.parsed_response)
         else
           errors = response.parsed_response['errors']&.map { |error| error['message'] }&.join(' ')
           Error.failure(:failed_on_github_api_endpoint, errors.to_s.empty? ? nil : errors)
