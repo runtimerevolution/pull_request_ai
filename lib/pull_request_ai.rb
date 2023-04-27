@@ -11,6 +11,9 @@ require 'pull_request_ai/version'
 require 'pull_request_ai/engine'
 
 require 'pull_request_ai/util/configuration'
+require 'pull_request_ai/util/symbol_details'
+require 'pull_request_ai/util/error'
+
 require 'pull_request_ai/openAi/client'
 require 'pull_request_ai/openAi/interpreter'
 

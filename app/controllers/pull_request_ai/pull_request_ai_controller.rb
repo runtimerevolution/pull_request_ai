@@ -10,7 +10,7 @@ module PullRequestAi
       client.destination_branches.fmap do |branches|
         @branches = branches
       end.or do |error|
-        @error_message = error
+        @error_message = error.description
       end
     end
 
@@ -18,7 +18,7 @@ module PullRequestAi
       client.flatten_current_changes(prepare_params[:branch]).fmap do |changes|
         if changes.empty?
           render(
-            json: { notice: 'No changes between branches. Please check the destination branch.' },
+            json: { notice: SYMBOL_DETAILS[:no_changes_btween_branches] },
             status: :unprocessable_entity
           )
         else
@@ -40,11 +40,11 @@ module PullRequestAi
               render(json: response)
             end
           end.or do |error|
-            render(json: { errors: error }, status: :unprocessable_entity)
+            render(json: { errors: error.description }, status: :unprocessable_entity)
           end
         end
       end.or do |error|
-        render(json: { errors: error }, status: :unprocessable_entity)
+        render(json: { errors: error.description }, status: :unprocessable_entity)
       end
     end
 
@@ -73,10 +73,7 @@ module PullRequestAi
       result.fmap do
         render(json: { success: 'true' })
       end.or do |error|
-        render(
-          json: { errors: error.to_s.empty? ? 'Something went wrong.' : error.to_s },
-          status: :unprocessable_entity
-        )
+        render(json: { errors: error.description }, status: :unprocessable_entity)
       end
     end
 
