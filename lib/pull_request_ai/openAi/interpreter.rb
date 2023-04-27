@@ -7,7 +7,7 @@ module PullRequestAi
         include Dry::Monads[:result, :do]
 
         def chat!(feature_type, current_changes)
-          response = PullRequestAi::OpenAi::Client.new.request(
+          response = PullRequestAi::OpenAi::Client.new.request_completions(
             content: build_chat_message(feature_type, current_changes)
           )
 

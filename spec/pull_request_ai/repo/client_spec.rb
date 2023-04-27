@@ -2,10 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe(PullRequestAi::Repo::Api) do
+RSpec.describe(PullRequestAi::Repo::Client) do
   include Dry::Monads[:result]
 
-  let(:api) { subject }
+  let(:client) { subject }
   let(:github_api_endpoint) { 'https://api.github.com' }
   let(:github_access_token) { 'someGithubAccessToken' }
 
@@ -26,7 +26,7 @@ RSpec.describe(PullRequestAi::Repo::Api) do
 
   describe '::github_api_endpoint' do
     it 'initializes with the configured github_api_endpoint' do
-      expect(api.github_api_endpoint).to(eq(github_api_endpoint))
+      expect(client.github_api_endpoint).to(eq(github_api_endpoint))
     end
 
     it 'accepts github_api_endpoint as argument' do
@@ -37,7 +37,7 @@ RSpec.describe(PullRequestAi::Repo::Api) do
 
   describe '::github_access_token' do
     it 'initializes with the configured github_access_token' do
-      expect(api.github_access_token).to(eq(github_access_token))
+      expect(client.github_access_token).to(eq(github_access_token))
     end
 
     it 'accepts github_access_token as argument' do
@@ -56,7 +56,7 @@ RSpec.describe(PullRequestAi::Repo::Api) do
     end
 
     it 'sends user content to httparty request' do
-      result = api.opened_pull_requests('repo/user', 'feature1', 'main')
+      result = client.opened_pull_requests('repo/user', 'feature1', 'main')
       expect(HTTParty).to(have_received(:send).with(any_args))
       expect(result).to(be_success)
     end
@@ -72,7 +72,7 @@ RSpec.describe(PullRequestAi::Repo::Api) do
     end
 
     it 'sends user content to httparty request' do
-      result = api.update_pull_request('repo/user', 1, 'main', 'title', 'description')
+      result = client.update_pull_request('repo/user', 1, 'main', 'title', 'description')
       expect(HTTParty).to(have_received(:send).with(any_args))
       expect(result).to(be_success)
     end
@@ -88,7 +88,7 @@ RSpec.describe(PullRequestAi::Repo::Api) do
     end
 
     it 'sends user content to httparty request' do
-      result = api.open_pull_request('repo/user', 'feature1', 'main', 'title', 'description')
+      result = client.open_pull_request('repo/user', 'feature1', 'main', 'title', 'description')
       expect(HTTParty).to(have_received(:send).with(any_args))
       expect(result).to(be_success)
     end

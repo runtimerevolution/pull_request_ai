@@ -2,7 +2,7 @@
 
 module PullRequestAi
   module OpenAi
-    # A client to access the OpenAI API.
+    # A client to communicate with the OpenAI API.
     class Client
       attr_accessor :openai_api_key
       attr_accessor :openai_api_endpoint
@@ -12,7 +12,7 @@ module PullRequestAi
       attr_reader   :http_timeout
 
       ##
-      # Initializes the Client
+      # Initializes the client.
       def initialize(
         openai_api_key: nil,
         openai_api_endpoint: nil,
@@ -29,11 +29,12 @@ module PullRequestAi
       end
 
       ##
-      # Makes a request to the OpenAI API
-      # Authentication information is automatically added
-      def request(content: '')
+      # Makes the completions request from the OpenAI API.
+      # Given a prompt, the model will return one or more predicted completions.
+      # https://platform.openai.com/docs/api-reference/chat
+      def request_completions(content: '')
         HTTParty.post(
-          build_uri,
+          build_url,
           headers: headers,
           body: body(content),
           timeout: http_timeout
@@ -42,7 +43,7 @@ module PullRequestAi
 
       private
 
-      def build_uri
+      def build_url
         "#{openai_api_endpoint}/#{api_version}/chat/completions"
       end
 

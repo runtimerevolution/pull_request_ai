@@ -2,13 +2,16 @@
 
 module PullRequestAi
   module Repo
-    class Api
+    # A client to communicate with the GitHub API.
+    class Client
       include Dry::Monads[:result]
 
       attr_accessor :github_api_endpoint
       attr_accessor :github_access_token
       attr_reader   :http_timeout
 
+      ##
+      # Initializes the client.
       def initialize(
         github_api_endpoint: nil,
         github_access_token: nil
@@ -18,6 +21,12 @@ module PullRequestAi
         @http_timeout = PullRequestAi.http_timeout
       end
 
+      ##
+      # Makes the request for Open PRs from the GitHub API.
+      # The slug combines the repository owner name and the repository name.
+      # Given a head and base the API will return a list of existing PRs open.
+      # Notice:
+      # On GitHub it is only possible to have one PR open with the same head and base, despite the result being a list.
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-pull-requests
       def opened_pull_requests(slug, head, base)
         query = {
@@ -28,6 +37,12 @@ module PullRequestAi
         request(:get, url, 200, query, {})
       end
 
+      ##
+      # Makes the request to update the existing PR to the GitHub API.
+      # The slug combines the repository owner name and the repository name.
+      # It requires the PR number to modify. The base, title, and description can be modified.
+      # Notice:
+      # We don't have logic to change the base on the UI.
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#update-a-pull-request
       def update_pull_request(slug, number, base, title, description)
         content = {
@@ -40,6 +55,10 @@ module PullRequestAi
         request(:patch, url, 200, {}, content)
       end
 
+      ##
+      # Makes the request to create a new PR to the GitHub API.
+      # The slug combines the repository owner name and the repository name.
+      # It requires the head (destination branch), base (current branch), a title, and a description.
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#create-a-pull-request
       def open_pull_request(slug, head, base, title, description)
         content = {
