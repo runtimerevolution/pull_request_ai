@@ -66,8 +66,8 @@ module PullRequestAi
       repo_reader.flatten_current_changes(to_branch)
     end
 
-    def suggested_description(type, changes)
-      chat_message = ai_interpreter.chat_message(type, changes)
+    def suggested_description(type, summary, changes)
+      chat_message = ai_interpreter.chat_message(type, summary, changes)
       ai_client.predicted_completions(chat_message)
     end
   end

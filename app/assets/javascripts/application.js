@@ -1,26 +1,29 @@
-const descriptionRequestButton = document.getElementById('description-request-btn');
-const copyPrButton = document.getElementById('copy-suggestion-pr-btn');
-const reselectPrButton = document.getElementById('reselect-pr-btn');
-const createPrButton = document.getElementById('create-pr-btn');
-const clipboardButton = document.getElementById('clipboard-btn');
-const updatePrButton = document.getElementById('update-pr-btn');
-const reloadButton = document.getElementById('reload-btn');
-
-const loadingContainer = document.getElementById('loading-container');
-const openPrNumber = document.getElementById('open_pr_number');
-
 const errorField = document.getElementById('error-field');
 const noticeField = document.getElementById('notice-field');
 const feedbackField = document.getElementById('feedback-field');
+
+const reloadButton = document.getElementById('reload-btn');
+const requestDescriptionButton = document.getElementById('request-description-btn');
+const copyChatToClipboardButton = document.getElementById('copy-chat-to-clipboard-btn');
+const copyChatToDescriptionButton = document.getElementById('copy-chat-to-description-btn');
+const createPullRequestButton = document.getElementById('create-pull-request-btn');
+const updatePullRequestButton = document.getElementById('update-pull-request-btn');
+const copyDescriptionToClipboardButton = document.getElementById('copy-description-to-clipboard-btn');
+
+const loadingContainer = document.getElementById('loading-container');
+const prepareContainer = document.getElementById('prepare-container');
+const chatDescriptionContainer = document.getElementById('chat-description-container');
+const pullRequestContainer = document.getElementById('pull-request-container');
+
 const branchField = document.getElementById('branch-field');
 const typeField = document.getElementById('type-field');
-const prTitleField = document.getElementById('pr-title-field');
-const descriptionField = document.getElementById('description-field');
-const currentDescriptionField = document.getElementById('current-description-field');
+const summaryField = document.getElementById('summary-field');
 
-const titlePrContainer = document.getElementById('pr-title-container');
-const createPrContainer = document.getElementById('create-pr-container');
-const openedPrContainer = document.getElementById('opened-pr-container');
+const chatDescriptionField = document.getElementById('chat-description-field');
+
+const pullRequestNumberField = document.getElementById('pull-request-number-field');
+const pullRequestTitleField = document.getElementById('pull-request-title-field');
+const pullRequestDescriptionField = document.getElementById('pull-request-description-field');
 
 async function jsonPost(path, data) {
   showSpinner();
@@ -49,31 +52,25 @@ reloadButton.onclick = () => {
   window.location.reload();
 }
 
-reselectPrButton.onclick = () => {
-  window.location.reload();
+copyChatToClipboardButton.onclick = () => {
+  copyToClipboardValueFrom(chatDescriptionField)
+  feedbackField.textContent = 'Chat description copied to the Clipboard.';
 }
 
-clipboardButton.onclick = () => {
-  if (navigator.clipboard) {
-    var text = descriptionField.value;
-    navigator.clipboard.writeText(text);
-  } else {
-    descriptionField.select();
-    document.execCommand("copy");
-  }
+copyDescriptionToClipboardButton.onclick = () => {
+  copyToClipboardValueFrom(pullRequestDescriptionField)
+  feedbackField.textContent = 'Description copied to the Clipboard.';
 }
 
-descriptionRequestButton.onclick = () => {
-  const data = { branch: branchField.value, type: typeField.value };
+requestDescriptionButton.onclick = () => {
+  const data = { branch: branchField.value, type: typeField.value, summary: summaryField.value };
 
   lockSelectors();
 
   jsonPost('/rrtools/pull_request_ai/prepare', data).then(data => {
     hideSpinner();
-    if (setErrorsOrNoticeIfNeeded(data)) {
-      unlockSelectors();
-    } 
-    else {
+    unlockSelectors();
+    if (setErrorsOrNoticeIfNeeded(data) == false) {
       enableSubmission(data);
     }
   }).catch(errorMsg => {
@@ -81,15 +78,16 @@ descriptionRequestButton.onclick = () => {
   });
 }
 
-copyPrButton.onclick = () => {
-  const suggestion = descriptionField.value;
-  const current = currentDescriptionField.value;
-  currentDescriptionField.value = current + "\n\n" + suggestion;
+copyChatToDescriptionButton.onclick = () => {
+  const chat = chatDescriptionField.value;
+  const current = pullRequestDescriptionField.value;
+  pullRequestDescriptionField.value = current + "\n\n" + chat;
+  feedbackField.textContent = 'Chat description copied to the Pull Request description.';
 }
 
-createPrButton.onclick = () => {
+createPullRequestButton.onclick = () => {
   const data = {
-    branch: branchField.value, description: descriptionField.value, title: prTitleField.value
+    branch: branchField.value, title: pullRequestTitleField.value, description: pullRequestDescriptionField.value
   };
 
   jsonPost('/rrtools/pull_request_ai/create', data).then(data => {
@@ -102,9 +100,9 @@ createPrButton.onclick = () => {
   });
 }
 
-updatePrButton.onclick = () => {
+updatePullRequestButton.onclick = () => {
   const data = {
-    number: openPrNumber.value, branch: branchField.value, description: currentDescriptionField.value, title: prTitleField.value
+    number: pullRequestNumberField.value, branch: branchField.value, title: pullRequestTitleField.value, description: pullRequestDescriptionField.value
   };
 
   jsonPost('/rrtools/pull_request_ai/update', data).then(data => {
@@ -115,6 +113,16 @@ updatePrButton.onclick = () => {
   }).catch(errorMsg => {
     errorField.textContent = errorMsg;
   });
+}
+
+function copyToClipboardValueFrom(field) {
+  if (navigator.clipboard) {
+    const text = field.value;
+    navigator.clipboard.writeText(text);
+  } else {
+    field.select();
+    document.execCommand("copy");
+  }
 }
 
 function showSpinner() {
@@ -128,11 +136,15 @@ function hideSpinner() {
 function lockSelectors() {
   branchField.setAttribute('disabled', '');
   typeField.setAttribute('disabled', '');
+  summaryField.setAttribute('disabled', '');
+  requestDescriptionButton.setAttribute('disabled', '');
 }
 
 function unlockSelectors() {
   branchField.removeAttribute('disabled');
   typeField.removeAttribute('disabled');
+  summaryField.removeAttribute('disabled');
+  requestDescriptionButton.removeAttribute('disabled');
 }
 
 function clearErrorsAndNoticeIfNeeded() {
@@ -155,43 +167,50 @@ function setErrorsOrNoticeIfNeeded(data) {
 
 function enableSubmission(data) {
   errorField.textContent = '';
-  descriptionField.value = data.description;
+  chatDescriptionField.value = data.description;
 
-  titlePrContainer.classList.add('hide');
-  createPrButton.classList.add('hide');
-  updatePrButton.classList.add('hide');
+  if (data.github_enabled) {
+    // With GitHub configured we always show the Pull Request form.
+    pullRequestContainer.classList.remove('hide');
+    if (data.open_pr) {
+      // With a Pull Request open we show the chat description on top with the button to copy to the form.
+      chatDescriptionContainer.classList.remove('hide');
+      copyChatToDescriptionButton.classList.remove('hide');
 
-  if (data.open_pr) {
-    openPrNumber.value = data.open_pr.number;
-    prTitleField.value = data.open_pr.title
-    currentDescriptionField.value = data.open_pr.description
-    
-    openedPrContainer.classList.remove('hide');
+      // Update the Pull Request form buttons accordingly.
+      createPullRequestButton.classList.add('hide');
+      updatePullRequestButton.classList.remove('hide');
 
-    if (data.github_enabled) {
-      updatePrButton.classList.remove('hide');  
-      titlePrContainer.classList.remove('hide');  
+      // Fill the form with the existing values.
+      pullRequestNumberField.value = data.open_pr.number;
+      pullRequestTitleField.value = data.open_pr.title;
+      pullRequestDescriptionField.value = data.open_pr.description;
+    } 
+    else {
+      // Without a Pull Request open we don't need to show the chat suggestion text area 
+      // because we will use the form already filled with the suggestion.
+      chatDescriptionContainer.classList.add('hide');
+
+      // Update the Pull Request form buttons accordingly.
+      createPullRequestButton.classList.remove('hide');
+      updatePullRequestButton.classList.add('hide');
+
+      // Clear the form and fill the description with the chat suggestion.
+      pullRequestNumberField.value = '';
+      pullRequestTitleField.value = '';
+      pullRequestDescriptionField.value = data.description;
     }
-  }
+  } 
   else {
-    openPrNumber.value = '';
-    prTitleField.value = ''
-    currentDescriptionField.value = ''
-
-    openedPrContainer.classList.add('hide');
-
-    if (data.github_enabled) {
-      createPrButton.classList.remove('hide');
-      titlePrContainer.classList.remove('hide');  
-    }
+    // Without GitHub configured we show the chat description with the copy button.
+    pullRequestContainer.classList.add('hide');
+    chatDescriptionContainer.classList.remove('hide');
+    copyChatToDescriptionButton.classList.add('hide');
   }
-  descriptionRequestButton.classList.add('hide');
-  createPrContainer.classList.remove('hide');
 }
 
 function disableSubmission() {
   errorField.textContent = '';
-  descriptionRequestButton.classList.remove('hide');
-  createPrContainer.classList.add('hide');
-  openedPrContainer.classList.add('hide');
+  chatDescriptionContainer.classList.add('hide');
+  pullRequestContainer.classList.add('hide');
 }
