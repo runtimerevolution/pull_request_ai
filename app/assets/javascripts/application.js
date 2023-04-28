@@ -71,10 +71,8 @@ descriptionRequestButton.onclick = () => {
 
   jsonPost('/rrtools/pull_request_ai/prepare', data).then(data => {
     hideSpinner();
-    if (setErrorsOrNoticeIfNeeded(data)) {
-      unlockSelectors();
-    } 
-    else {
+    unlockSelectors();
+    if (setErrorsOrNoticeIfNeeded(data) == false) {
       enableSubmission(data);
     }
   }).catch(errorMsg => {
@@ -129,11 +127,13 @@ function hideSpinner() {
 function lockSelectors() {
   branchField.setAttribute('disabled', '');
   typeField.setAttribute('disabled', '');
+  summaryField.setAttribute('disabled', '');
 }
 
 function unlockSelectors() {
   branchField.removeAttribute('disabled');
   typeField.removeAttribute('disabled');
+  summaryField.removeAttribute('disabled');
 }
 
 function clearErrorsAndNoticeIfNeeded() {
@@ -186,13 +186,11 @@ function enableSubmission(data) {
       titlePrContainer.classList.remove('hide');  
     }
   }
-  descriptionRequestButton.classList.add('hide');
   createPrContainer.classList.remove('hide');
 }
 
 function disableSubmission() {
   errorField.textContent = '';
-  descriptionRequestButton.classList.remove('hide');
   createPrContainer.classList.add('hide');
   openedPrContainer.classList.add('hide');
 }

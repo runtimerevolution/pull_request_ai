@@ -7,30 +7,33 @@
 
   <p id='notice-field' class='mt-20 yellow'></p>
 
-  <div id='prepare-pr-conainer' class=<%= 'hide' if @error_message %>>
-    <div class='mt-20 mr-20 ib'>
-      <%= label_tag :destination_branch, 'Destination Branch' %>
-      <%= select_tag :branch, options_for_select(@branches || []), { id: 'branch-field', class: 'block mt-10' } %>
-    </div>
+  <div id='prepare-pr-container' class=<%= 'hide' if @error_message %>>
 
-    <div class='mt-20 ib'>
-      <%= label_tag :type, 'Pull Request Type' %>
-      <%= select_tag :type, options_for_select(@types), { id: 'type-field', class: 'block mt-10 w-130' } %>
+    <div class='mt-20 flex'>
+      <div class='mr-10 fw'>
+        <%= label_tag :destination_branch, 'Destination Branch' %>
+        <%= select_tag :branch, options_for_select(@branches || []), { id: 'branch-field', class: 'block mt-10 fw' } %>
+      </div>
+
+      <div class='ml-10 fw'>
+        <%= label_tag :type, 'Pull Request Type' %>
+        <%= select_tag :type, options_for_select(@types), { id: 'type-field', class: 'block mt-10 fw' } %>
+      </div>
     </div>
 
     <div class='mt-20'>
       <%= label_tag :summary_title, 'Summary (Optional)' %>
-      <%= text_area_tag :summary, '', { id: 'summary-field', class: 'block mt-5' } %>
+      <%= text_area_tag :summary, '', { id: 'summary-field', class: 'block mt-5 h-100' } %>
     </div>
 
   </div>
 
-  <div class='flex-center mt-20'>
-    <%= button_tag 'Refresh', { id: 'reload-btn', class: "mt-20#{@error_message ? '' : ' hide'}" } %>
+  <div class='flex-center'>
+    <%= button_tag 'Reload', { id: 'reload-btn', class: "mt-20#{@error_message ? '' : ' hide'}" } %>
   </div>
 
-  <div class='flex-center mt-20'>
-    <%= button_tag 'Next', { id: 'description-request-btn', class: "mt-20#{@error_message ? ' hide' : ''}" } %>
+  <div class='flex-center'>
+    <%= button_tag 'Request Description', { id: 'description-request-btn', class: "mt-20#{@error_message ? ' hide' : ''}" } %>
   </div>
 
   <div id='create-pr-container' class='hide mt-20'>
@@ -61,7 +64,7 @@
     </div>
 
     <div id='actions-container' class='mt-20'>
-      <%= button_tag 'Reset', { id: 'reselect-pr-btn', class: 'mt-20' } %>
+      <%= button_tag 'Reselect', { id: 'reselect-pr-btn', class: 'mt-20' } %>
 
       <%= button_tag 'Create Pull Request', { id: 'create-pr-btn', class: 'mt-20' } %>
 
