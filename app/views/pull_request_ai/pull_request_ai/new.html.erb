@@ -1,82 +1,70 @@
 <div class='clear'>
-  <h2 class='mb-50 flex-center'><strong>Pull Request AI</strong></h2>
+  <h2 class='mt-10'><strong>Pull Request AI</strong></h2>
 
-  <p id='error-field' class='mt-20 red'>
-    <%= @error_message %>
-  </p>
+  <div class='flex mt-10 mh-40 w-760'>
+    <p id='error-field' class='red'><%= @error_message %></p>
+    <p id='notice-field' class='yellow'/>
+    <p id='feedback-field' class='green'/>
 
-  <p id='notice-field' class='mt-20 yellow'></p>
+    <div id='loading-container' class='hide'>
+      <div class='spinner'></div>
+    </div>
+  </div>
 
-  <div id='prepare-pr-container' class=<%= 'hide' if @error_message %>>
-
-    <div class='mt-20 flex'>
+  <div id='prepare-container' class=<%= 'hide' if @error_message %>>
+    <div class='flex'>
       <div class='mr-10 fw'>
-        <%= label_tag :destination_branch, 'Destination Branch' %>
+        <%= label_tag :branch_title, 'Destination Branch' %>
         <%= select_tag :branch, options_for_select(@branches || []), { id: 'branch-field', class: 'block mt-10 fw' } %>
       </div>
-
       <div class='ml-10 fw'>
-        <%= label_tag :type, 'Pull Request Type' %>
+        <%= label_tag :type_title, 'Pull Request Type' %>
         <%= select_tag :type, options_for_select(@types), { id: 'type-field', class: 'block mt-10 fw' } %>
       </div>
     </div>
-
     <div class='mt-20'>
       <%= label_tag :summary_title, 'Summary (Optional)' %>
       <%= text_area_tag :summary, '', { id: 'summary-field', class: 'block mt-5 h-100' } %>
     </div>
-
   </div>
 
-  <div class='flex-center'>
+  <div class='flex'>
     <%= button_tag 'Reload', { id: 'reload-btn', class: "mt-20#{@error_message ? '' : ' hide'}" } %>
+    <%= button_tag 'Request Description', { id: 'request-description-btn', class: "mt-20#{@error_message ? ' hide' : ''}" } %>
   </div>
 
-  <div class='flex-center'>
-    <%= button_tag 'Request Description', { id: 'description-request-btn', class: "mt-20#{@error_message ? ' hide' : ''}" } %>
+  <div id='chat-description-container' class='hide mt-40'>
+    <%= label_tag :chat_description_title, 'ChatGPT Description' %>
+    <%= text_area_tag :chat_description, '', { id: 'chat-description-field', class: 'block mt-5 h-220' } %>
+
+    <div class='flex mt-20'>
+      <%= button_tag 'Copy to Description', { id: 'copy-chat-to-description-btn', class: 'mr-20' } %>
+      <%= button_tag 'Copy to Clipboard', { id: 'copy-chat-to-clipboard-btn' } %>
+    </div>
   </div>
 
-  <div id='create-pr-container' class='hide mt-20'>
+  <div id='pull-request-container' class='hide mt-40'>
+    <h3>Pull Request</h3>
 
-    <%= hidden_field_tag 'open_pr_number', '' %>
+    <%= hidden_field_tag :pull_request_number, '', { id: 'pull-request-number-field' } %>
 
-    <div id='pr-title-container' class='mt-20 mb-20'>
-      <%= label_tag :pr_title, 'Pull Request Title' %>
-      <%= text_field_tag :pull_request_title, '', { id: 'pr-title-field', class: 'block mt-5 fw' } %>
+    <div class='mt-20'>
+      <%= label_tag :pull_request_title_title, 'Title' %>
+      <%= text_field_tag :pull_request_title, '', { id: 'pull-request-title-field', class: 'block mt-5 fw' } %>
     </div>
 
-    <div>
-      <%= label_tag :suggested_description, 'ChatGPT Suggested Description' %>
-      <%= text_area_tag :description, '', { id: 'description-field', class: 'block mt-5' } %>
+    <div class='mt-20'>
+      <%= label_tag :pull_request_description_title, 'Description' %>
+      <%= text_area_tag :pull_request_description, '', { id: 'pull-request-description-field', class: 'block mt-5 h-220' } %>
     </div>
 
-    <%= button_tag 'Copy to Clipboard', { id: 'clipboard-btn', class: 'mt-5 mb-20 right' } %>
-
-    <div id='opened-pr-container' class='hide mt-20'>
-    
-      <%= button_tag 'Copy suggestion to submission', { id: 'copy-suggestion-pr-btn', class: 'mb-20' } %>
-
-      <div>
-        <%= label_tag :submission_description, 'Description for Submission' %>
-        <%= text_area_tag :description, '', { id: 'current-description-field', class: 'block mt-5' } %>
-      </div>
-
+    <div class='mt-20'>
+      <%= button_tag 'Create Pull Request', { id: 'create-pull-request-btn', class: 'mr-10' } %>
+      <%= button_tag 'Update Pull Request', { id: 'update-pull-request-btn', class: 'mr-10' } %>
+      <%= button_tag 'Copy to Clipboard', { id: 'copy-description-to-clipboard-btn', class: 'ml-10' } %>
     </div>
 
-    <div id='actions-container' class='mt-20'>
-      <%= button_tag 'Reselect', { id: 'reselect-pr-btn', class: 'mt-20' } %>
-
-      <%= button_tag 'Create Pull Request', { id: 'create-pr-btn', class: 'mt-20' } %>
-
-      <%= button_tag 'Update Pull Request', { id: 'update-pr-btn', class: 'mt-20' } %>
-    </div>
-
-    <p id='feedback-field' class='mt-20 green'/>
   </div>
-</div>
-
-<div id='loading-container' class='hide mt-20'>
-  <div class='spinner'></div>
 </div>
 
 <%= javascript_include_tag 'application.js' %>

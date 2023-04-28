@@ -9,6 +9,7 @@
 
 .mt-10 { margin-top: 10px; }
 .mt-20 { margin-top: 20px; }
+.mt-40 { margin-top: 40px; }
 .mb-20 { margin-bottom: 20px; }
 .mb-50 { margin-bottom: 50px; }
 .mr-10 { margin-right: 10px; }
@@ -17,8 +18,11 @@
 
 .fw { width: 100% }
 
+.w-760 { width: 760px; }
+
+.mh-40 { min-height: 40px; }
 .h-100 { height: 100px; }
-.h-270 { height: 270px; }
+.h-220 { height: 220px; }
 
 .flex-center {
   display: flex;
