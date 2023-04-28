@@ -16,6 +16,7 @@ const branchField = document.getElementById('branch-field');
 const typeField = document.getElementById('type-field');
 const prTitleField = document.getElementById('pr-title-field');
 const descriptionField = document.getElementById('description-field');
+const summaryField = document.getElementById('summary-field');
 const currentDescriptionField = document.getElementById('current-description-field');
 
 const titlePrContainer = document.getElementById('pr-title-container');
@@ -64,7 +65,7 @@ clipboardButton.onclick = () => {
 }
 
 descriptionRequestButton.onclick = () => {
-  const data = { branch: branchField.value, type: typeField.value };
+  const data = { branch: branchField.value, type: typeField.value, summary: summaryField.value };
 
   lockSelectors();
 

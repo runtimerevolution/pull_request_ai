@@ -17,6 +17,12 @@
       <%= label_tag :type, 'Pull Request Type' %>
       <%= select_tag :type, options_for_select(@types), { id: 'type-field', class: 'block mt-10 w-130' } %>
     </div>
+
+    <div class='mt-20'>
+      <%= label_tag :summary_title, 'Summary (Optional)' %>
+      <%= text_area_tag :summary, '', { id: 'summary-field', class: 'block mt-5' } %>
+    </div>
+
   </div>
 
   <div class='flex-center mt-20'>

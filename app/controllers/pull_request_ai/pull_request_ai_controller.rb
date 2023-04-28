@@ -22,7 +22,7 @@ module PullRequestAi
             status: :unprocessable_entity
           )
         else
-          client.suggested_description(prepare_params[:type], changes).fmap do |description|
+          client.suggested_description(prepare_params[:type], prepare_params[:summary], changes).fmap do |description|
             response = { description: description }
             client.current_opened_pull_requests(prepare_params[:branch]).fmap do |open_prs|
               response[:github_enabled] = true
@@ -82,7 +82,7 @@ module PullRequestAi
     end
 
     def prepare_params
-      params.require(:pull_request_ai).permit(:branch, :type)
+      params.require(:pull_request_ai).permit(:branch, :type, :summary)
     end
 
     def pr_params
