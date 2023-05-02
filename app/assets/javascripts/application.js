@@ -1,3 +1,5 @@
+//= require_tree .
+
 const reloadButton = document.getElementById('reload-btn');
 const requestDescriptionButton = document.getElementById('request-description-btn');
 const copyChatToClipboardButton = document.getElementById('copy-chat-to-clipboard-btn');
