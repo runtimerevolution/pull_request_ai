@@ -1,7 +1,3 @@
-const errorField = document.getElementById('error-field');
-const noticeField = document.getElementById('notice-field');
-const feedbackField = document.getElementById('feedback-field');
-
 const reloadButton = document.getElementById('reload-btn');
 const requestDescriptionButton = document.getElementById('request-description-btn');
 const copyChatToClipboardButton = document.getElementById('copy-chat-to-clipboard-btn');
@@ -44,7 +40,6 @@ async function jsonPost(path, data) {
     disableSubmission();
     throw new Error(`An error has occured: ${response.statusText}`);
   }
-
   return await response.json();
 }
 
@@ -53,13 +48,17 @@ reloadButton.onclick = () => {
 }
 
 copyChatToClipboardButton.onclick = () => {
-  copyToClipboardValueFrom(chatDescriptionField)
-  feedbackField.textContent = 'Chat description copied to the Clipboard.';
+  copyToClipboardValueFrom(
+    chatDescriptionField,
+    "Chat description copied to the Clipboard."
+  );
 }
 
 copyDescriptionToClipboardButton.onclick = () => {
-  copyToClipboardValueFrom(pullRequestDescriptionField)
-  feedbackField.textContent = 'Description copied to the Clipboard.';
+  copyToClipboardValueFrom(
+    pullRequestDescriptionField,
+    "Description copied to the Clipboard."
+  );
 }
 
 requestDescriptionButton.onclick = () => {
@@ -70,11 +69,17 @@ requestDescriptionButton.onclick = () => {
   jsonPost('/rrtools/pull_request_ai/prepare', data).then(data => {
     hideSpinner();
     unlockSelectors();
-    if (setErrorsOrNoticeIfNeeded(data) == false) {
+    if ('errors' in data) {
+      window.showNotification({ message: data.errors, theme: "error" });
+    }
+    else if ('notice' in data) {
+      window.showNotification({ message: data.notice, theme: "warning" });
+    }
+    else {
       enableSubmission(data);
     }
   }).catch(errorMsg => {
-    errorField.textContent = errorMsg;
+    window.showNotification({ message: errorMsg, theme: "error" });
   });
 }
 
@@ -82,21 +87,20 @@ copyChatToDescriptionButton.onclick = () => {
   const chat = chatDescriptionField.value;
   const current = pullRequestDescriptionField.value;
   pullRequestDescriptionField.value = current + "\n\n" + chat;
-  feedbackField.textContent = 'Chat description copied to the Pull Request description.';
+  window.showNotification({
+    message: "Chat description copied to the Pull Request description."
+  });
 }
 
 createPullRequestButton.onclick = () => {
   const data = {
     branch: branchField.value, title: pullRequestTitleField.value, description: pullRequestDescriptionField.value
   };
-
   jsonPost('/rrtools/pull_request_ai/create', data).then(data => {
     hideSpinner();
-    if (setErrorsOrNoticeIfNeeded(data) == false) {
-      feedbackField.textContent = 'Pull Request created successfully';
-    }
+    processData(data, "Pull Request created successfully.");
   }).catch(errorMsg => {
-    errorField.textContent = errorMsg;
+    window.showNotification({ message: errorMsg, theme: "error" });
   });
 }
 
@@ -104,25 +108,12 @@ updatePullRequestButton.onclick = () => {
   const data = {
     number: pullRequestNumberField.value, branch: branchField.value, title: pullRequestTitleField.value, description: pullRequestDescriptionField.value
   };
-
   jsonPost('/rrtools/pull_request_ai/update', data).then(data => {
     hideSpinner();
-    if (setErrorsOrNoticeIfNeeded(data) == false) {
-      feedbackField.textContent = 'Pull Request updated successfully';
-    }
+    processData(data, "Pull Request updated successfully.");
   }).catch(errorMsg => {
-    errorField.textContent = errorMsg;
+    window.showNotification({ message: errorMsg, theme: "error" });
   });
-}
-
-function copyToClipboardValueFrom(field) {
-  if (navigator.clipboard) {
-    const text = field.value;
-    navigator.clipboard.writeText(text);
-  } else {
-    field.select();
-    document.execCommand("copy");
-  }
 }
 
 function showSpinner() {
@@ -147,26 +138,30 @@ function unlockSelectors() {
   requestDescriptionButton.removeAttribute('disabled');
 }
 
-function clearErrorsAndNoticeIfNeeded() {
-  errorField.textContent = '';
-  noticeField.textContent = '';
+function copyToClipboardValueFrom(field, successMessage) {
+  if (navigator.clipboard) {
+    const text = field.value;
+    navigator.clipboard.writeText(text);
+  } else {
+    field.select();
+    document.execCommand("copy");
+  }
+  window.showNotification({ message: successMessage });
 }
 
-function setErrorsOrNoticeIfNeeded(data) {
-  clearErrorsAndNoticeIfNeeded();
+function processData(data, successMessage) {
   if ('errors' in data) {
-    errorField.textContent = data.errors;
-    return true;
+    window.showNotification({ message: data.errors, theme: "error" });
   }
   else if ('notice' in data) {
-    noticeField.textContent = data.notice;
-    return true;
+    window.showNotification({ message: data.notice, theme: "warning" });
   }
-  return false;
+  else {
+    window.showNotification({ message: successMessage });
+  }
 }
 
 function enableSubmission(data) {
-  errorField.textContent = '';
   chatDescriptionField.value = data.description;
 
   if (data.github_enabled) {
@@ -210,7 +205,6 @@ function enableSubmission(data) {
 }
 
 function disableSubmission() {
-  errorField.textContent = '';
   chatDescriptionContainer.classList.add('hide');
   pullRequestContainer.classList.add('hide');
 }
