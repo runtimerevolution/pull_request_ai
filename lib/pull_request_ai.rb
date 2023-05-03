@@ -17,6 +17,8 @@ require 'pull_request_ai/util/error'
 require 'pull_request_ai/openAi/client'
 require 'pull_request_ai/openAi/interpreter'
 
+require 'pull_request_ai/bitbucket/client'
+
 require 'pull_request_ai/github/client'
 
 require 'pull_request_ai/repo/reader'
@@ -27,6 +29,8 @@ module PullRequestAi
   extend SingleForwardable
   def_delegators :configuration, :github_api_endpoint
   def_delegators :configuration, :github_access_token, :github_access_token=
+  def_delegators :configuration, :bitbucket_api_endpoint
+  def_delegators :configuration, :bitbucket_access_token, :bitbucket_access_token=
   def_delegators :configuration, :openai_api_key, :openai_api_key=
   def_delegators :configuration, :openai_api_endpoint
   def_delegators :configuration, :api_version

@@ -8,6 +8,7 @@ module PullRequestAi
     connection_timeout: 'Connection timeout.',
     failed_on_openai_api_endpoint: 'Failed to communicate with openAI API.',
     failed_on_github_api_endpoint: 'Failed to communicate with GitHub API.',
+    failed_on_bitbucket_api_endpoint: 'Failed to communicate with Bitbucket API.',
     no_changes_btween_branches: 'No changes between branches. Please check the destination branch.'
   }
 end
