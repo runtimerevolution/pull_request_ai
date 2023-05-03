@@ -2,99 +2,41 @@
 
 module PullRequestAi
   module Repo
-    # A client to communicate with the GitHub API.
     class Client
-      attr_accessor :github_api_endpoint
-      attr_accessor :github_access_token
       attr_reader   :http_timeout
+      attr_accessor :api_endpoint
 
       ##
       # Initializes the client.
-      def initialize(
-        github_api_endpoint: nil,
-        github_access_token: nil
-      )
-        @github_api_endpoint = github_api_endpoint || PullRequestAi.github_api_endpoint
-        @github_access_token = github_access_token || PullRequestAi.github_access_token
-        @http_timeout = PullRequestAi.http_timeout
+      def initialize(http_timeout, api_endpoint)
+        @http_timeout = http_timeout
+        @api_endpoint = api_endpoint
       end
 
-      ##
-      # Makes the request for Open PRs from the GitHub API.
-      # The slug combines the repository owner name and the repository name.
-      # Given a head and base the API will return a list of existing PRs open.
-      # Notice:
-      # On GitHub it is only possible to have one PR open with the same head and base, despite the result being a list.
-      # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-pull-requests
       def opened_pull_requests(slug, head, base)
-        query = {
-          head: "#{slug.split(":").first}:#{head}",
-          base: base
-        }
-        url = build_url(slug)
-        request(:get, url, query, {})
+        Error.failure(:project_not_configured)
       end
 
-      ##
-      # Makes the request to update the existing PR to the GitHub API.
-      # The slug combines the repository owner name and the repository name.
-      # It requires the PR number to modify. The base, title, and description can be modified.
-      # Notice:
-      # We don't have logic to change the base on the UI.
-      # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#update-a-pull-request
       def update_pull_request(slug, number, base, title, description)
-        body = {
-          title: title,
-          body: description,
-          state: 'open',
-          base: base
-        }.to_json
-        url = build_url(slug, "/#{number}")
-        request(:patch, url, {}, body)
+        Error.failure(:project_not_configured)
       end
 
-      ##
-      # Makes the request to create a new PR to the GitHub API.
-      # The slug combines the repository owner name and the repository name.
-      # It requires the head (destination branch), base (current branch), a title, and a description.
-      # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#create-a-pull-request
       def open_pull_request(slug, head, base, title, description)
-        body = {
-          title: title,
-          body: description,
-          head: head,
-          base: base
-        }.to_json
-        url = build_url(slug)
-        request(:post, url, {}, body)
+        Error.failure(:project_not_configured)
       end
 
-      private
-
-      def request(type, url, query, body)
-        response = HTTParty.send(
-          type, url, headers: headers, query: query, body: body, timeout: http_timeout
-        )
-
-        if response.success?
-          Dry::Monads::Success(response.parsed_response)
-        else
-          errors = response.parsed_response['errors']&.map { |error| error['message'] }&.join(' ')
-          Error.failure(:failed_on_github_api_endpoint, errors.to_s.empty? ? nil : errors)
+      class << self
+        def client_from_host(host)
+          result = host.success? ? host.success : ''
+          case result
+          when 'github.com'
+            PullRequestAi::GitHub::Client.new
+          when 'bitbucket.org'
+            PullRequestAi::Bitbucket::Client.new
+          else
+            PullRequestAi::Repo::Client.new
+          end
         end
-      rescue Net::ReadTimeout
-        Error.failure(:connection_timeout)
-      end
-
-      def build_url(slug, suffix = '')
-        "#{github_api_endpoint}/repos/#{slug}/pulls#{suffix}"
-      end
-
-      def headers
-        {
-          'Accept' => 'application/vnd.github+json',
-          'Authorization' => "Bearer #{github_access_token}"
-        }
       end
     end
   end

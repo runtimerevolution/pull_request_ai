@@ -2,17 +2,17 @@
 
 require 'rails_helper'
 
-RSpec.describe(PullRequestAi::Repo::Client) do
+RSpec.describe(PullRequestAi::GitHub::Client) do
   include Dry::Monads[:result]
 
   let(:client) { subject }
-  let(:github_api_endpoint) { 'https://api.github.com' }
-  let(:github_access_token) { 'someGithubAccessToken' }
+  let(:api_endpoint) { 'https://api.github.com' }
+  let(:access_token) { 'someGithubAccessToken' }
 
   let(:configuration) do
     PullRequestAi.configure do |config|
-      config.github_api_endpoint = github_api_endpoint
-      config.github_access_token = github_access_token
+      config.github_api_endpoint = api_endpoint
+      config.github_access_token = access_token
     end
   end
 
@@ -24,25 +24,25 @@ RSpec.describe(PullRequestAi::Repo::Client) do
     expect { described_class }.not_to(raise_error)
   end
 
-  describe '::github_api_endpoint' do
-    it 'initializes with the configured github_api_endpoint' do
-      expect(client.github_api_endpoint).to(eq(github_api_endpoint))
+  describe '::api_endpoint' do
+    it 'initializes with the configured api_endpoint' do
+      expect(client.api_endpoint).to(eq(api_endpoint))
     end
 
-    it 'accepts github_api_endpoint as argument' do
-      klass = described_class.new(github_api_endpoint: 'https://github.com')
-      expect(klass.github_api_endpoint).to(eq('https://github.com'))
+    it 'accepts api_endpoint as argument' do
+      klass = described_class.new(api_endpoint: 'https://github.com')
+      expect(klass.api_endpoint).to(eq('https://github.com'))
     end
   end
 
-  describe '::github_access_token' do
-    it 'initializes with the configured github_access_token' do
-      expect(client.github_access_token).to(eq(github_access_token))
+  describe '::access_token' do
+    it 'initializes with the configured access_token' do
+      expect(client.access_token).to(eq(access_token))
     end
 
-    it 'accepts github_access_token as argument' do
-      klass = described_class.new(github_access_token: 'Github Token')
-      expect(klass.github_access_token).to(eq('Github Token'))
+    it 'accepts access_token as argument' do
+      klass = described_class.new(access_token: 'Access Token')
+      expect(klass.access_token).to(eq('Access Token'))
     end
   end
 

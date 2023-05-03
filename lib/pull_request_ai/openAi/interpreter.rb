@@ -12,7 +12,6 @@ module PullRequestAi
         end
         result << "Write a #{feature_type} pull request description based on the following changes:\n"
         result << current_changes
-        puts result
         result.freeze
       end
     end

@@ -22,10 +22,16 @@ require 'pull_request_ai/repo/reader'
 require 'pull_request_ai/repo/prompt'
 require 'pull_request_ai/repo/file'
 
+require 'pull_request_ai/bitbucket/client'
+require 'pull_request_ai/github/client'
+
 module PullRequestAi
   extend SingleForwardable
   def_delegators :configuration, :github_api_endpoint
   def_delegators :configuration, :github_access_token, :github_access_token=
+  def_delegators :configuration, :bitbucket_api_endpoint
+  def_delegators :configuration, :bitbucket_app_password, :bitbucket_app_password=
+  def_delegators :configuration, :bitbucket_username, :bitbucket_username=
   def_delegators :configuration, :openai_api_key, :openai_api_key=
   def_delegators :configuration, :openai_api_endpoint
   def_delegators :configuration, :api_version

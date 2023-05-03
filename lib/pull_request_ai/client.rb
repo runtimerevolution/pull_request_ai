@@ -3,18 +3,24 @@
 module PullRequestAi
   class Client
     def initialize(
-      github_api_endpoint: nil,
-      github_access_token: nil,
       openai_api_key: nil,
       openai_api_endpoint: nil,
+      github_api_endpoint: nil,
+      github_access_token: nil,
+      bitbucket_api_endpoint: nil,
+      bitbucket_app_password: nil,
+      bitbucket_username: nil,
       api_version: nil,
       model: nil,
       temperature: nil
     )
-      PullRequestAi.configuration.github_api_endpoint = github_api_endpoint if github_api_endpoint
-      PullRequestAi.configuration.github_access_token = github_access_token if github_access_token
       PullRequestAi.configuration.openai_api_key = openai_api_key if openai_api_key
       PullRequestAi.configuration.openai_api_endpoint = openai_api_endpoint if openai_api_endpoint
+      PullRequestAi.configuration.github_api_endpoint = github_api_endpoint if github_api_endpoint
+      PullRequestAi.configuration.github_access_token = github_access_token if github_access_token
+      PullRequestAi.configuration.bitbucket_api_endpoint = bitbucket_api_endpoint if bitbucket_api_endpoint
+      PullRequestAi.configuration.bitbucket_app_password = bitbucket_app_password if bitbucket_app_password
+      PullRequestAi.configuration.bitbucket_username = bitbucket_username if bitbucket_username
       PullRequestAi.configuration.api_version = api_version if api_version
       PullRequestAi.configuration.model = model if model
       PullRequestAi.configuration.temperature = temperature if temperature
@@ -25,7 +31,7 @@ module PullRequestAi
     end
 
     def repo_client
-      @repo_client ||= PullRequestAi::Repo::Client.new
+      @repo_client ||= PullRequestAi::Repo::Client.client_from_host(repo_reader.repository_host)
     end
 
     def ai_client
