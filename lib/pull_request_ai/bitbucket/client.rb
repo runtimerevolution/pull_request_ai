@@ -33,7 +33,20 @@ module PullRequestAi
           q: "source.branch.name = \"#{head}\" AND destination.branch.name = \"#{base}\""
         }
         url = build_url(slug)
-        request(:get, url, query, {})
+        request(:get, url, query, {}).bind do |open_prs|
+          if open_prs.empty? || open_prs['values'].empty?
+            Dry::Monads::Success([])
+          else
+            result = open_prs['values'].map do |pr|
+              {
+                number: pr['id'],
+                title: pr['title'],
+                description: pr['description'] || ''
+              }
+            end
+            Dry::Monads::Success(result)
+          end
+        end
       end
 
       ##

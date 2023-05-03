@@ -32,7 +32,20 @@ module PullRequestAi
           base: base
         }
         url = build_url(slug)
-        request(:get, url, query, {})
+        request(:get, url, query, {}).bind do |open_prs|
+          if open_prs.empty? 
+            Dry::Monads::Success([])
+          else 
+            result = open_prs.map do |pr|
+              {
+                number: pr['number'],
+                title: pr['title'],
+                description: pr['body'] || ''
+              }
+            end
+            Dry::Monads::Success(result)
+          end
+        end
       end
 
       ##

@@ -21,7 +21,7 @@ module PullRequestAi
           case result
             when 'github.com'
               PullRequestAi::GitHub::Client.new
-            when 'bitbucket.com'
+            when 'bitbucket.org'
               PullRequestAi::Bitbucket::Client.new
             else
               PullRequestAi::Repo::Client.new

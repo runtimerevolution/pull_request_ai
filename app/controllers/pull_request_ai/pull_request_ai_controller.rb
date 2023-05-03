@@ -26,14 +26,7 @@ module PullRequestAi
             response = { description: description }
             client.current_opened_pull_requests(prepare_params[:branch]).fmap do |open_prs|
               response[:github_enabled] = true
-              open_pr = open_prs.first
-              if open_pr
-                response[:open_pr] = {
-                  number: open_pr['number'],
-                  title: open_pr['title'],
-                  description: open_pr['body']
-                }
-              end
+              response[:open_pr] = open_prs.first unless open_prs.empty?
               render(json: response)
             end.or do |_|
               response[:github_enabled] = false
