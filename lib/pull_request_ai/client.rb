@@ -8,7 +8,8 @@ module PullRequestAi
       github_api_endpoint: nil,
       github_access_token: nil,
       bitbucket_api_endpoint: nil,
-      bitbucket_access_token: nil,
+      bitbucket_app_password: nil,
+      bitbucket_username: nil,
       api_version: nil,
       model: nil,
       temperature: nil
@@ -18,7 +19,8 @@ module PullRequestAi
       PullRequestAi.configuration.github_api_endpoint = github_api_endpoint if github_api_endpoint
       PullRequestAi.configuration.github_access_token = github_access_token if github_access_token
       PullRequestAi.configuration.bitbucket_api_endpoint = bitbucket_api_endpoint if bitbucket_api_endpoint
-      PullRequestAi.configuration.bitbucket_access_token = bitbucket_access_token if bitbucket_access_token
+      PullRequestAi.configuration.bitbucket_app_password = bitbucket_app_password if bitbucket_app_password
+      PullRequestAi.configuration.bitbucket_username = bitbucket_username if bitbucket_username
       PullRequestAi.configuration.api_version = api_version if api_version
       PullRequestAi.configuration.model = model if model
       PullRequestAi.configuration.temperature = temperature if temperature

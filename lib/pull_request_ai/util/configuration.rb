@@ -5,7 +5,8 @@ module PullRequestAi
     class Configuration
       attr_accessor :openai_api_key
       attr_accessor :github_access_token
-      attr_accessor :bitbucket_access_token
+      attr_accessor :bitbucket_app_password
+      attr_accessor :bitbucket_username
 
       attr_accessor :openai_api_endpoint
       attr_accessor :github_api_endpoint
@@ -23,7 +24,8 @@ module PullRequestAi
 
         @openai_api_key = ENV['OPENAI_API_KEY']
         @github_access_token = ENV['GITHUB_ACCESS_TOKEN']
-        @bitbucket_access_token = ENV['BITBUCKET_ACCESS_TOKEN']
+        @bitbucket_app_password = ENV['BITBUCKET_APP_PASSWORD']
+        @bitbucket_username = ENV['BITBUCKET_USERNAME']
 
         @openai_api_endpoint = 'https://api.openai.com'
         @github_api_endpoint = 'https://api.github.com'

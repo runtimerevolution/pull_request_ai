@@ -4,25 +4,25 @@ module PullRequestAi
   module GitHub
     # A client to communicate with the GitHub API.
     class Client
-      attr_accessor :github_api_endpoint
-      attr_accessor :github_access_token
+      attr_accessor :api_endpoint
+      attr_accessor :access_token
       attr_reader   :http_timeout
 
       ##
       # Initializes the client.
       def initialize(
-        github_api_endpoint: nil,
-        github_access_token: nil
+        api_endpoint: nil,
+        access_token: nil
       )
-        @github_api_endpoint = github_api_endpoint || PullRequestAi.github_api_endpoint
-        @github_access_token = github_access_token || PullRequestAi.github_access_token
+        @api_endpoint = api_endpoint || PullRequestAi.github_api_endpoint
+        @access_token = access_token || PullRequestAi.github_access_token
         @http_timeout = PullRequestAi.http_timeout
       end
 
       ##
-      # Makes the request for Open PRs from the GitHub API.
+      # Requests the list of Open Pull Requests using the GitHub API.
       # The slug combines the repository owner name and the repository name.
-      # Given a head and base the API will return a list of existing PRs open.
+      # The query contains the head and base to filter the results.
       # Notice:
       # On GitHub it is only possible to have one PR open with the same head and base, despite the result being a list.
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#list-pull-requests
@@ -36,9 +36,9 @@ module PullRequestAi
       end
 
       ##
-      # Makes the request to update the existing PR to the GitHub API.
+      # Request to update the existing Pull Request using the GitHub API.
       # The slug combines the repository owner name and the repository name.
-      # It requires the PR number to modify. The base, title, and description can be modified.
+      # It requires the Pull Request number to modify it. The base, title, and description can be modified.
       # Notice:
       # We don't have logic to change the base on the UI.
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#update-a-pull-request
@@ -54,9 +54,9 @@ module PullRequestAi
       end
 
       ##
-      # Makes the request to create a new PR to the GitHub API.
+      # Request to open a new Pull Request using the GitHub API.
       # The slug combines the repository owner name and the repository name.
-      # It requires the head (destination branch), base (current branch), a title, and a description.
+      # It requires the head (destination branch), the base (current branch), the title, and a optional description.
       # https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28#create-a-pull-request
       def open_pull_request(slug, head, base, title, description)
         body = {
@@ -87,13 +87,13 @@ module PullRequestAi
       end
 
       def build_url(slug, suffix = '')
-        "#{github_api_endpoint}/repos/#{slug}/pulls#{suffix}"
+        "#{api_endpoint}/repos/#{slug}/pulls#{suffix}"
       end
 
       def headers
         {
           'Accept' => 'application/vnd.github+json',
-          'Authorization' => "Bearer #{github_access_token}"
+          'Authorization' => "Bearer #{access_token}"
         }
       end
     end

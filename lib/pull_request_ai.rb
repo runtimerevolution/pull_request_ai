@@ -30,7 +30,8 @@ module PullRequestAi
   def_delegators :configuration, :github_api_endpoint
   def_delegators :configuration, :github_access_token, :github_access_token=
   def_delegators :configuration, :bitbucket_api_endpoint
-  def_delegators :configuration, :bitbucket_access_token, :bitbucket_access_token=
+  def_delegators :configuration, :bitbucket_app_password, :bitbucket_app_password=
+  def_delegators :configuration, :bitbucket_username, :bitbucket_username=
   def_delegators :configuration, :openai_api_key, :openai_api_key=
   def_delegators :configuration, :openai_api_endpoint
   def_delegators :configuration, :api_version

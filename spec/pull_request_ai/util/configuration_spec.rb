@@ -15,10 +15,16 @@ RSpec.describe(PullRequestAi::Util::Configuration) do
     expect(config.github_access_token).to(eq('someGitHubAccessToken'))
   end
 
-  it 'has an bitbucket_access_token attribute' do
+  it 'has an bitbucket_app_password attribute' do
     config = described_class.new
-    config.bitbucket_access_token = 'someBitbucketAccessToken'
-    expect(config.bitbucket_access_token).to(eq('someBitbucketAccessToken'))
+    config.bitbucket_app_password = 'someBitbucketAppPassword'
+    expect(config.bitbucket_app_password).to(eq('someBitbucketAppPassword'))
+  end
+
+  it 'has an bitbucket_username attribute' do
+    config = described_class.new
+    config.bitbucket_username = 'someUsername'
+    expect(config.bitbucket_username).to(eq('someUsername'))
   end
 
   it 'has a model attribute' do
