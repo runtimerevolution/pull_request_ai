@@ -4,23 +4,23 @@ module PullRequestAi
   module Bitbucket
     # A client to communicate with the Bitbucket API.
     class Client < PullRequestAi::Repo::Client
-      attr_accessor :api_endpoint
       attr_accessor :app_password
       attr_accessor :username
-      attr_reader   :http_timeout
 
       ##
       # Initializes the client.
       def initialize(
+        http_timeout: nil,
         api_endpoint: nil,
         app_password: nil,
         username: nil
       )
-        super.initialize
-        @api_endpoint = api_endpoint || PullRequestAi.bitbucket_api_endpoint
+        super(
+          http_timeout || PullRequestAi.http_timeout,
+          api_endpoint || PullRequestAi.bitbucket_api_endpoint
+        )
         @app_password = app_password || PullRequestAi.bitbucket_app_password
         @username = username || PullRequestAi.bitbucket_username
-        @http_timeout = PullRequestAi.http_timeout
       end
 
       ##

@@ -4,20 +4,20 @@ module PullRequestAi
   module GitHub
     # A client to communicate with the GitHub API.
     class Client < PullRequestAi::Repo::Client
-      attr_accessor :api_endpoint
       attr_accessor :access_token
-      attr_reader   :http_timeout
 
       ##
       # Initializes the client.
       def initialize(
+        http_timeout: nil,
         api_endpoint: nil,
         access_token: nil
       )
-        super.initialize
-        @api_endpoint = api_endpoint || PullRequestAi.github_api_endpoint
+        super(
+          http_timeout || PullRequestAi.http_timeout,
+          api_endpoint || PullRequestAi.github_api_endpoint
+        )
         @access_token = access_token || PullRequestAi.github_access_token
-        @http_timeout = PullRequestAi.http_timeout
       end
 
       ##

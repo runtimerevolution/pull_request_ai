@@ -3,6 +3,16 @@
 module PullRequestAi
   module Repo
     class Client
+      attr_reader   :http_timeout
+      attr_accessor :api_endpoint
+
+      ##
+      # Initializes the client.
+      def initialize(http_timeout, api_endpoint)
+        @http_timeout = http_timeout
+        @api_endpoint = api_endpoint
+      end
+
       def opened_pull_requests(slug, head, base)
         Error.failure(:project_not_configured)
       end
