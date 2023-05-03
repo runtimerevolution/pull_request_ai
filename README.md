@@ -1,5 +1,5 @@
 # PullRequestAi
-This Rails Engine enables requesting Pull Request descriptions from OpenAI chatGPT and optionally allows direct creation or updating of Pull Requests on GitHub.
+This Rails Engine offers a way to request Pull Request descriptions from OpenAI chatGPT and optionally allows direct creation or updating of Pull Requests on GitHub or Bitbucket.
 
 ## Installation
 Add this line to your application's Gemfile:
@@ -26,45 +26,52 @@ This Rails Engine is available as open source under the terms of the [MIT Licens
 
 ## Configuration
 
-To use and configure this Rails Engine you have two options. The first one "Basic Config" using only Environment variables, the other "Advanced Config" using the Rails Engine initializer class with extra configurations.
+To configure this Rails Engine you can **just** set some specific Environment Variables or you can use the Rails Engine initializer class.
 
-### Basic Config
-The easiest way to configure this Rails Engine is by setting environment variables.
+The minimum requirement that allows this Rails Engine to ask chatGPT Pull Request descriptions based on Git respository changes is the [OpenAI Key](https://platform.openai.com/account/usage).
 
-- [OPENAI_API_KEY](https://platform.openai.com/account/usage) Required environment variable to request Pull Requests descriptions on OpenAI chatGPT.
+Using **only** Environment Variable you need to set:
+- [OPENAI_API_KEY](https://platform.openai.com/account/usage)
 
-- [GITHUB_ACCESS_TOKEN](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) Optional environment variable that enables direct creation or updating of Pull Requests on GitHub via the Rails Engine interface.
-
-Notice: An access token for GitHub is optional and doesn't affect the Rails Engine's ability to suggest Pull Requests for a git repository.
-
-### Advanced Config
-
-Another way to configure this Rails Engine is through its initializer.
-To request Pull Request descriptions from chatGPT, you must provide a [OpenAI Key](https://platform.openai.com/account/usage) on `openai_api_key`.
-Additionally, you can enable direct creation or updating of Pull Requests on GitHub by providing an [access token]((https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)) for GitHub on `github_access_token`.
-
+OR, if you choose to use the initializer:
 ```ruby
 PullRequestAi.configure do |config|
-    config.openai_api_key = 'YOUR_OPENAI_API_KEY' #Required
-    config.github_access_token = 'YOUR_GITHUB_ACCESS_TOKEN' #Optional
+    config.openai_api_key = 'YOUR_OPENAI_API_KEY'
 end
 ```
 
-Using the Rails Engine initializer you have access to aditional configurations, which are set by default with the current values:
+## Integrations
 
+To enable direct creation or updating of Pull Requests this Rails Engine can integrate with GitHub or Bitbucket.
+
+For GitHub you need to provide a [GitHub Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+And for Bitbucket you need to provide a [Bitbucket App Password](https://bitbucket.org/account/settings/app-passwords/) and your Bitbucket Username.
+
+### GitHub Configuration
+
+Using **only** Environment Variable you need to set:
+- [GITHUB_ACCESS_TOKEN](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+
+OR, if you choose to use the initializer:
 ```ruby
 PullRequestAi.configure do |config|
-  ...
-  config.openai_api_endpoint = 'https://api.openai.com'
-  config.github_api_endpoint = 'https://api.github.com'
-  config.model = 'gpt-3.5-turbo'
-  config.temperature = 0.8
+    config.github_access_token = 'YOUR_GITHUB_ACCESS_TOKEN'
 end
 ```
 
-The [`model`](https://platform.openai.com/docs/models/model-endpoint-compatibility) parameter allows the user to select which OpenAI model to use for Pull Request suggestions. The default model used by this Gem is `gpt-3.5-turbo`, which is the most accessible. However, if you have access to version 4, we recommend using the `gpt-4` model.
+### Bitbucket Configuration
 
-The [`temperature`](https://platform.openai.com/docs/api-reference/completions/create#completions/create-temperature) parameter is an OpenAI API configuration that affects the randomness of the output. Higher values produce more random results, while lower values like 0.2 produce more focused and deterministic output.
+Using **only** Environment Variable you need to set:
+- [BITBUCKET_APP_PASSWORD](https://bitbucket.org/account/settings/app-passwords/)
+- BITBUCKET_USERNAME
+
+OR, if you choose to use the initializer:
+```ruby
+PullRequestAi.configure do |config|
+    config.bitbucket_app_password = 'YOUR_BITBUCKET_APP_PASSWORD'
+    config.bitbucket_username = 'YOUR_BITBUCKET_USERNAME'
+end
+```
 
 ## Usage
 
@@ -74,13 +81,13 @@ To use the Rails Engine interface on the browser you need to mount the engine ro
 mount PullRequestAi::Engine => ''
 ```
 
-To access it navigate to:
+Then you navigate to:
 
 ```
 http://127.0.0.1:3000/rrtools/pull_request_ai
 ```
 
-OR, if you want to use this Rails Engine on code you can create an instance of the main client object.
+Another way to use this Rails Engine is through code, to do that create an instance of the main client object.
 
 ```ruby
 client = PullRequestAi::Client.new
@@ -94,3 +101,24 @@ This object offers the following actions:
 - flatten_current_changes(branch) - method that returns changes between the current branch and the given branch in a single string.
 
 Notes about the return of these methods, all methods take advantage of [dry-monads](https://dry-rb.org/gems/dry-monads/1.3/).
+
+## Extra Configurations
+
+If you need you have access to some aditional configurations which are:
+- openai_api_endpoint - The OpenAI API endpoint.
+- github_api_endpoint - The GitHub API endpoint.
+- bitbucket_api_endpoint - The Bitbucket API endpoint.
+- model - The [`model`](https://platform.openai.com/docs/models/model-endpoint-compatibility) parameter allows the user to select which OpenAI model to use for Pull Request suggestions. The default model used by this Gem is `gpt-3.5-turbo`, which is the most accessible. However, if you have access to version 4, we recommend using the `gpt-4` model.
+- temperature - The [`temperature`](https://platform.openai.com/docs/api-reference/completions/create#completions/create-temperature) parameter is an OpenAI API configuration that affects the randomness of the output. Higher values produce more random results, while lower values like 0.2 produce more focused and deterministic output.
+
+The only way to configure these parameters is using the initializer, above it is listing as well their default values:
+
+```ruby
+PullRequestAi.configure do |config|
+  ...
+  config.openai_api_endpoint = 'https://api.openai.com'
+  config.github_api_endpoint = 'https://api.github.com'
+  config.model = 'gpt-3.5-turbo'
+  config.temperature = 0.8
+end
+```
