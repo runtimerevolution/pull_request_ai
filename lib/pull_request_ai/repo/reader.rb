@@ -20,12 +20,24 @@ module PullRequestAi
       end
 
       def repository_slug
-        remote_name.bind do |name|
-          url = prompt.remote_url(name)
+        remote_uri.bind do |uri|
           regex = %r{\A/?(?<slug>.*?)(?:\.git)?\Z}
-          uri = GitCloneUrl.parse(url)
           match = regex.match(uri.path)
           match ? Success(match[:slug]) : Error.failure(:invalid_repository_url)
+        end
+      end
+
+      def repository_host
+        remote_uri.bind do |uri|
+          Success(uri.host)
+        end
+      end
+
+      def remote_uri
+        remote_name.bind do |name|
+          url = prompt.remote_url(name)
+          uri = GitCloneUrl.parse(url)
+          Success(uri)
         end
       rescue URI::InvalidComponentError
         Error.failure(:invalid_repository_url)

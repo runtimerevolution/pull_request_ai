@@ -30,12 +30,8 @@ module PullRequestAi
       @repo_reader ||= PullRequestAi::Repo::Reader.new
     end
 
-    def bitbucket_client
-      @bitbucket_client ||= PullRequestAi::Bitbucket::Client.new
-    end
-
-    def github_client
-      @github_client ||= PullRequestAi::GitHub::Client.new
+    def repo_client
+      @repo_client ||= PullRequestAi::Repo::Client.client_from_host(repo_reader.repository_host)
     end
 
     def ai_client
@@ -49,7 +45,7 @@ module PullRequestAi
     def current_opened_pull_requests(base)
       repo_reader.repository_slug.bind do |slug|
         repo_reader.current_branch.bind do |branch|
-          github_client.opened_pull_requests(slug, branch, base)
+          repo_client.opened_pull_requests(slug, branch, base)
         end
       end
     end
@@ -61,14 +57,14 @@ module PullRequestAi
     def open_pull_request(to_base, title, description)
       repo_reader.repository_slug.bind do |slug|
         repo_reader.current_branch.bind do |branch|
-          github_client.open_pull_request(slug, branch, to_base, title, description)
+          repo_client.open_pull_request(slug, branch, to_base, title, description)
         end
       end
     end
 
     def update_pull_request(number, base, title, description)
       repo_reader.repository_slug.bind do |slug|
-        github_client.update_pull_request(slug, number, base, title, description)
+        repo_client.update_pull_request(slug, number, base, title, description)
       end
     end
 

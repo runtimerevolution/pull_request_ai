@@ -3,7 +3,7 @@
 module PullRequestAi
   module Bitbucket
     # A client to communicate with the Bitbucket API.
-    class Client
+    class Client < PullRequestAi::Repo::Client
       attr_accessor :api_endpoint
       attr_accessor :app_password
       attr_accessor :username
@@ -43,7 +43,7 @@ module PullRequestAi
       # Notice:
       # We don't have logic to change the base on the UI.
       # https://developer.atlassian.com/cloud/bitbucket/rest/api-group-pullrequests/#api-repositories-workspace-repo-slug-pullrequests-pull-request-id-put
-      def update_pull_request(slug, pull_request_id, base, title, description)
+      def update_pull_request(slug, number, base, title, description)
         body = {
           title: title,
           destination: {
@@ -53,7 +53,7 @@ module PullRequestAi
           },
           description: description
         }.to_json
-        url = build_url(slug, "/#{pull_request_id}")
+        url = build_url(slug, "/#{number}")
         request(:put, url, {}, body)
       end
 

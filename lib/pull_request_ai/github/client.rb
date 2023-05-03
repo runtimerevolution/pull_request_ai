@@ -3,7 +3,7 @@
 module PullRequestAi
   module GitHub
     # A client to communicate with the GitHub API.
-    class Client
+    class Client < PullRequestAi::Repo::Client
       attr_accessor :api_endpoint
       attr_accessor :access_token
       attr_reader   :http_timeout
