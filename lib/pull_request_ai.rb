@@ -17,7 +17,8 @@ require 'pull_request_ai/util/error'
 require 'pull_request_ai/openAi/client'
 require 'pull_request_ai/openAi/interpreter'
 
-require 'pull_request_ai/repo/client'
+require 'pull_request_ai/github/client'
+
 require 'pull_request_ai/repo/reader'
 require 'pull_request_ai/repo/prompt'
 require 'pull_request_ai/repo/file'

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe(PullRequestAi::Repo::Client) do
+RSpec.describe(PullRequestAi::GitHub::Client) do
   include Dry::Monads[:result]
 
   let(:client) { subject }

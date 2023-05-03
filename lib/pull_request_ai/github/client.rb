@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module PullRequestAi
-  module Repo
+  module GitHub
     # A client to communicate with the GitHub API.
     class Client
       attr_accessor :github_api_endpoint
