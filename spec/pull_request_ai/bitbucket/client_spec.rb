@@ -2,17 +2,19 @@
 
 require 'rails_helper'
 
-RSpec.describe(PullRequestAi::GitHub::Client) do
+RSpec.describe(PullRequestAi::Bitbucket::Client) do
   include Dry::Monads[:result]
 
   let(:client) { subject }
-  let(:api_endpoint) { 'https://api.github.com' }
-  let(:access_token) { 'someGithubAccessToken' }
+  let(:api_endpoint) { 'https://api.bitbucket.org' }
+  let(:app_password) { 'someBitbucketAppPassword' }
+  let(:username) { 'someUsername' }
 
   let(:configuration) do
     PullRequestAi.configure do |config|
-      config.github_api_endpoint = api_endpoint
-      config.github_access_token = access_token
+      config.bitbucket_api_endpoint = api_endpoint
+      config.bitbucket_app_password = app_password
+      config.bitbucket_username = username
     end
   end
 
@@ -30,19 +32,30 @@ RSpec.describe(PullRequestAi::GitHub::Client) do
     end
 
     it 'accepts api_endpoint as argument' do
-      klass = described_class.new(api_endpoint: 'https://github.com')
-      expect(klass.api_endpoint).to(eq('https://github.com'))
+      klass = described_class.new(api_endpoint: 'https://bitbucket.com')
+      expect(klass.api_endpoint).to(eq('https://bitbucket.com'))
     end
   end
 
-  describe '::access_token' do
-    it 'initializes with the configured access_token' do
-      expect(client.access_token).to(eq(access_token))
+  describe '::app_password' do
+    it 'initializes with the configured app_password' do
+      expect(client.app_password).to(eq(app_password))
     end
 
-    it 'accepts access_token as argument' do
-      klass = described_class.new(access_token: 'Access Token')
-      expect(klass.access_token).to(eq('Access Token'))
+    it 'accepts app_password as argument' do
+      klass = described_class.new(app_password: 'App Password')
+      expect(klass.app_password).to(eq('App Password'))
+    end
+  end
+
+  describe '::username' do
+    it 'initializes with the configured username' do
+      expect(client.username).to(eq(username))
+    end
+
+    it 'accepts username as argument' do
+      klass = described_class.new(username: 'aUsername')
+      expect(klass.username).to(eq('aUsername'))
     end
   end
 
