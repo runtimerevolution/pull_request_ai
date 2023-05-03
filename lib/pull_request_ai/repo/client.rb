@@ -19,12 +19,12 @@ module PullRequestAi
         def client_from_host(host)
           result = host.success? ? host.success : ''
           case result
-            when 'github.com'
-              PullRequestAi::GitHub::Client.new
-            when 'bitbucket.org'
-              PullRequestAi::Bitbucket::Client.new
-            else
-              PullRequestAi::Repo::Client.new
+          when 'github.com'
+            PullRequestAi::GitHub::Client.new
+          when 'bitbucket.org'
+            PullRequestAi::Bitbucket::Client.new
+          else
+            PullRequestAi::Repo::Client.new
           end
         end
       end

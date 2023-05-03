@@ -14,6 +14,7 @@ module PullRequestAi
         api_endpoint: nil,
         access_token: nil
       )
+        super.initialize
         @api_endpoint = api_endpoint || PullRequestAi.github_api_endpoint
         @access_token = access_token || PullRequestAi.github_access_token
         @http_timeout = PullRequestAi.http_timeout
@@ -33,9 +34,9 @@ module PullRequestAi
         }
         url = build_url(slug)
         request(:get, url, query, {}).bind do |open_prs|
-          if open_prs.empty? 
+          if open_prs.empty?
             Dry::Monads::Success([])
-          else 
+          else
             result = open_prs.map do |pr|
               {
                 number: pr['number'],

@@ -16,6 +16,7 @@ module PullRequestAi
         app_password: nil,
         username: nil
       )
+        super.initialize
         @api_endpoint = api_endpoint || PullRequestAi.bitbucket_api_endpoint
         @app_password = app_password || PullRequestAi.bitbucket_app_password
         @username = username || PullRequestAi.bitbucket_username
@@ -110,7 +111,6 @@ module PullRequestAi
         if response.success?
           Dry::Monads::Success(response.parsed_response)
         else
-          puts response.parsed_response
           error = response.parsed_response.dig('error', 'message')
           Error.failure(:failed_on_bitbucket_api_endpoint, error.to_s.empty? ? nil : error)
         end
