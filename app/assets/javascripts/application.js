@@ -7,6 +7,7 @@ const copyChatToDescriptionButton = document.getElementById('copy-chat-to-descri
 const createPullRequestButton = document.getElementById('create-pull-request-btn');
 const updatePullRequestButton = document.getElementById('update-pull-request-btn');
 const copyDescriptionToClipboardButton = document.getElementById('copy-description-to-clipboard-btn');
+const pullRequestWebsiteButton = document.getElementById('pull-request-website-btn');
 
 const loadingContainer = document.getElementById('loading-container');
 const prepareContainer = document.getElementById('prepare-container');
@@ -166,6 +167,7 @@ function processData(data, successMessage) {
 
 function enableSubmission(data) {
   chatDescriptionField.value = data.description;
+  pullRequestWebsiteButton.classList.add('hide');
 
   if (data.remote_enabled) {
     // With Remote configured we always show the Pull Request form.
@@ -183,6 +185,8 @@ function enableSubmission(data) {
       pullRequestNumberField.value = data.open_pr.number;
       pullRequestTitleField.value = data.open_pr.title;
       pullRequestDescriptionField.value = data.open_pr.description;
+
+      checkPullRequestVisibility(data.open_pr.link);
     } 
     else {
       // Without a Pull Request open we don't need to show the chat suggestion text area 
@@ -222,6 +226,19 @@ function updateForm(data) {
     pullRequestNumberField.value = data.number;
     pullRequestTitleField.value = data.title;
     pullRequestDescriptionField.value = data.description;
+    
+    checkPullRequestVisibility(data.link);
+  }
+}
+
+function checkPullRequestVisibility(link) {
+  if (link && link.length > 0) {
+    pullRequestWebsiteButton.classList.remove('hide');
+    pullRequestWebsiteButton.addEventListener("click", function() {
+      window.open(link, "_blank");
+    });
+  } else {
+    pullRequestWebsiteButton.classList.add('hide');
   }
 }
 

@@ -89,7 +89,8 @@ module PullRequestAi
         {
           number: details['number'],
           title: details['title'],
-          description: details['body'] || ''
+          description: details['body'] || '',
+          link: details['html_url'] || ''
         }
       end
 

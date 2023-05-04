@@ -101,7 +101,8 @@ module PullRequestAi
         {
           number: details['id'],
           title: details['title'],
-          description: details['description'] || ''
+          description: details['description'] || '',
+          link: details.dig('links', 'html', 'href') || ''
         }
       end
 
