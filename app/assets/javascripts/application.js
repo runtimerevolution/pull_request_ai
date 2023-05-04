@@ -234,9 +234,9 @@ function updateForm(data) {
 function checkPullRequestVisibility(link) {
   if (link && link.length > 0) {
     pullRequestWebsiteButton.classList.remove('hide');
-    pullRequestWebsiteButton.addEventListener("click", function() {
+    pullRequestWebsiteButton.onclick = function() {
       window.open(link, "_blank");
-    });
+    };
   } else {
     pullRequestWebsiteButton.classList.add('hide');
   }
