@@ -160,14 +160,15 @@ function processData(data, successMessage) {
   }
   else {
     window.showNotification({ message: successMessage });
+    updateForm(data)
   }
 }
 
 function enableSubmission(data) {
   chatDescriptionField.value = data.description;
 
-  if (data.github_enabled) {
-    // With GitHub configured we always show the Pull Request form.
+  if (data.remote_enabled) {
+    // With Remote configured we always show the Pull Request form.
     pullRequestContainer.classList.remove('hide');
     if (data.open_pr) {
       // With a Pull Request open we show the chat description on top with the button to copy to the form.
@@ -199,10 +200,28 @@ function enableSubmission(data) {
     }
   } 
   else {
-    // Without GitHub configured we show the chat description with the copy button.
+    // Without Remote configured we show the chat description with the copy button.
     pullRequestContainer.classList.add('hide');
     chatDescriptionContainer.classList.remove('hide');
     copyChatToDescriptionButton.classList.add('hide');
+  }
+}
+
+function updateForm(data) {
+  if (data.number && data.title) {
+    chatDescriptionField.value = pullRequestDescriptionField.value;
+
+    // With Remote configured we always show the Pull Request form.
+    pullRequestContainer.classList.remove('hide');
+
+    // Update the Pull Request form buttons accordingly.
+    createPullRequestButton.classList.add('hide');
+    updatePullRequestButton.classList.remove('hide');
+
+    // Fill the form with the existing values.
+    pullRequestNumberField.value = data.number;
+    pullRequestTitleField.value = data.title;
+    pullRequestDescriptionField.value = data.description;
   }
 }
 
