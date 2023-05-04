@@ -63,7 +63,7 @@ end
 
 Using **only** Environment Variable you need to set:
 - [BITBUCKET_APP_PASSWORD](https://bitbucket.org/account/settings/app-passwords/)
-- BITBUCKET_USERNAME
+- [BITBUCKET_USERNAME](https://bitbucket.org/account/settings/)
 
 OR, if you choose to use the initializer:
 ```ruby
