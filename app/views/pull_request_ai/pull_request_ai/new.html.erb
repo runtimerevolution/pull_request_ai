@@ -12,7 +12,7 @@
   <div id='prepare-container' class=<%= 'hide' if @error_message %>>
     <div class='flex'>
       <div class='mr-10 fw'>
-        <%= label_tag :branch_title, 'Destination Branch' %>
+        <%= label_tag :branch_title, 'Destination Branch*' %>
         <%= select_tag :branch, options_for_select(@branches || []), { id: 'branch-field', class: 'block mt-10 fw' } %>
       </div>
       <div class='ml-10 fw'>
@@ -20,6 +20,7 @@
         <%= select_tag :type, options_for_select(@types), { id: 'type-field', class: 'block mt-10 fw' } %>
       </div>
     </div>
+    <p class='mt-10 w-760'>* You may notice more branches listed than actually exist. To update your local repository with the remote, you can run `git fetch --prune`. However, before doing so, make sure to consider if this is the appropriate action for your needs.</p>
     <div class='mt-20'>
       <%= label_tag :summary_title, 'Summary (Optional)' %>
       <%= text_area_tag :summary, '', { id: 'summary-field', class: 'block mt-5 h-100' } %>
@@ -60,6 +61,7 @@
       <%= button_tag 'Create Pull Request', { id: 'create-pull-request-btn', class: 'mr-10' } %>
       <%= button_tag 'Update Pull Request', { id: 'update-pull-request-btn', class: 'mr-10' } %>
       <%= button_tag 'Copy to Clipboard', { id: 'copy-description-to-clipboard-btn', class: 'ml-10' } %>
+      <%= button_tag 'Pull Request Website', { id: 'pull-request-website-btn', class: 'ml-10' } %>
     </div>
 
   </div>

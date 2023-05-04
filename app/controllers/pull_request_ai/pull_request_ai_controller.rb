@@ -25,11 +25,11 @@ module PullRequestAi
           client.suggested_description(prepare_params[:type], prepare_params[:summary], changes).fmap do |description|
             response = { description: description }
             client.current_opened_pull_requests(prepare_params[:branch]).fmap do |open_prs|
-              response[:github_enabled] = true
+              response[:remote_enabled] = true
               response[:open_pr] = open_prs.first unless open_prs.empty?
               render(json: response)
             end.or do |_|
-              response[:github_enabled] = false
+              response[:remote_enabled] = false
               render(json: response)
             end
           end.or do |error|
@@ -63,8 +63,8 @@ module PullRequestAi
     private
 
     def proccess_result(result)
-      result.fmap do
-        render(json: { success: 'true' })
+      result.fmap do |details|
+        render(json: details)
       end.or do |error|
         render(json: { errors: error.description }, status: :unprocessable_entity)
       end

@@ -7,6 +7,7 @@ const copyChatToDescriptionButton = document.getElementById('copy-chat-to-descri
 const createPullRequestButton = document.getElementById('create-pull-request-btn');
 const updatePullRequestButton = document.getElementById('update-pull-request-btn');
 const copyDescriptionToClipboardButton = document.getElementById('copy-description-to-clipboard-btn');
+const pullRequestWebsiteButton = document.getElementById('pull-request-website-btn');
 
 const loadingContainer = document.getElementById('loading-container');
 const prepareContainer = document.getElementById('prepare-container');
@@ -160,14 +161,16 @@ function processData(data, successMessage) {
   }
   else {
     window.showNotification({ message: successMessage });
+    updateForm(data)
   }
 }
 
 function enableSubmission(data) {
   chatDescriptionField.value = data.description;
+  pullRequestWebsiteButton.classList.add('hide');
 
-  if (data.github_enabled) {
-    // With GitHub configured we always show the Pull Request form.
+  if (data.remote_enabled) {
+    // With Remote configured we always show the Pull Request form.
     pullRequestContainer.classList.remove('hide');
     if (data.open_pr) {
       // With a Pull Request open we show the chat description on top with the button to copy to the form.
@@ -182,6 +185,8 @@ function enableSubmission(data) {
       pullRequestNumberField.value = data.open_pr.number;
       pullRequestTitleField.value = data.open_pr.title;
       pullRequestDescriptionField.value = data.open_pr.description;
+
+      checkPullRequestVisibility(data.open_pr.link);
     } 
     else {
       // Without a Pull Request open we don't need to show the chat suggestion text area 
@@ -199,10 +204,41 @@ function enableSubmission(data) {
     }
   } 
   else {
-    // Without GitHub configured we show the chat description with the copy button.
+    // Without Remote configured we show the chat description with the copy button.
     pullRequestContainer.classList.add('hide');
     chatDescriptionContainer.classList.remove('hide');
     copyChatToDescriptionButton.classList.add('hide');
+  }
+}
+
+function updateForm(data) {
+  if (data.number && data.title) {
+    chatDescriptionField.value = pullRequestDescriptionField.value;
+
+    // With Remote configured we always show the Pull Request form.
+    pullRequestContainer.classList.remove('hide');
+
+    // Update the Pull Request form buttons accordingly.
+    createPullRequestButton.classList.add('hide');
+    updatePullRequestButton.classList.remove('hide');
+
+    // Fill the form with the existing values.
+    pullRequestNumberField.value = data.number;
+    pullRequestTitleField.value = data.title;
+    pullRequestDescriptionField.value = data.description;
+    
+    checkPullRequestVisibility(data.link);
+  }
+}
+
+function checkPullRequestVisibility(link) {
+  if (link && link.length > 0) {
+    pullRequestWebsiteButton.classList.remove('hide');
+    pullRequestWebsiteButton.onclick = function() {
+      window.open(link, "_blank");
+    };
+  } else {
+    pullRequestWebsiteButton.classList.add('hide');
   }
 }
 

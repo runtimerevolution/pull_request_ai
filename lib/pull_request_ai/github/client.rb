@@ -38,11 +38,7 @@ module PullRequestAi
             Dry::Monads::Success([])
           else
             result = open_prs.map do |pr|
-              {
-                number: pr['number'],
-                title: pr['title'],
-                description: pr['body'] || ''
-              }
+              parsed_pr_details(pr)
             end
             Dry::Monads::Success(result)
           end
@@ -64,7 +60,9 @@ module PullRequestAi
           base: base
         }.to_json
         url = build_url(slug, "/#{number}")
-        request(:patch, url, {}, body)
+        request(:patch, url, {}, body).bind do |pr|
+          Dry::Monads::Success(parsed_pr_details(pr))
+        end
       end
 
       ##
@@ -80,10 +78,21 @@ module PullRequestAi
           base: base
         }.to_json
         url = build_url(slug)
-        request(:post, url, {}, body)
+        request(:post, url, {}, body).bind do |pr|
+          Dry::Monads::Success(parsed_pr_details(pr))
+        end
       end
 
       private
+
+      def parsed_pr_details(details)
+        {
+          number: details['number'],
+          title: details['title'],
+          description: details['body'] || '',
+          link: details['html_url'] || ''
+        }
+      end
 
       def request(type, url, query, body)
         response = HTTParty.send(
