@@ -32,7 +32,7 @@ module PullRequestAi
         @bitbucket_api_endpoint = 'https://api.bitbucket.org'
 
         @model = 'gpt-3.5-turbo'
-        @temperature = 0.8
+        @temperature = 0.6
         @http_timeout = 60
 
         @rrtools_grouped_gems = Rails.application.routes.routes.select do |prop|

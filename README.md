@@ -118,7 +118,8 @@ PullRequestAi.configure do |config|
   ...
   config.openai_api_endpoint = 'https://api.openai.com'
   config.github_api_endpoint = 'https://api.github.com'
+  config.bitbucket_api_endpoint = 'https://api.bitbucket.org'
   config.model = 'gpt-3.5-turbo'
-  config.temperature = 0.8
+  config.temperature = 0.6
 end
 ```
