@@ -24,9 +24,9 @@ Gem::Specification.new do |spec|
     Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   end
 
-  spec.add_dependency('dry-monads', '~> 1.6')
-  spec.add_dependency('git_clone_url', '~> 2.0')
-  spec.add_dependency('httparty', '~> 0.21')
-  spec.add_dependency('rack-attack', '~> 6.6')
-  spec.add_dependency('rails', '~> 6.1')
+  spec.add_dependency('dry-monads', '>= 1.6.0')
+  spec.add_dependency('git_clone_url', '>= 2.0.0')
+  spec.add_dependency('httparty', '>= 0.21.0')
+  spec.add_dependency('rack-attack', '>= 6.6.0')
+  spec.add_dependency('rails', '>= 6.1.4')
 end

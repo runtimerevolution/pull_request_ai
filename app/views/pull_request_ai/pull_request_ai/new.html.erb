@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <div id='prepare-container' class=<%= 'hide' if @error_message %>>
+  <div id='prepare-container' class=<%= 'hide' if @error_message || @misconfigured %>>
     <div class='flex'>
       <div class='mr-10 fw'>
         <%= label_tag :branch_title, 'Destination Branch*' %>
@@ -27,8 +27,62 @@
     </div>
   </div>
 
+  <div class=<%= 'hide' unless @misconfigured %>>
+    <h3>Configuration guide</h3>
+    <p class='mt-10 w-760'>To configure this Rails Engine you can <strong>just</strong> set some specific Environment Variables or you can use the Rails Engine initializer class.</p>
+    <p class='mt-10 w-760'>The minimum requirement that allows this Rails Engine to ask chatGPT Pull Request descriptions based on Git respository changes is the <a href="https://platform.openai.com/account/usage" rel="nofollow">OpenAI Key</a>.</p>
+    <p class='mt-20 w-760'>Using <strong>only</strong> Environment Variable you need to set:</p>
+    <ul class='mt-10'>
+      <li><a href="https://platform.openai.com/account/usage" rel="nofollow">OPENAI_API_KEY</a></li>
+    </ul>
+    <p class='mt-20'>OR, if you choose to use the initializer:</p>
+    <div class='mt-10'>
+      <pre>
+        <span>PullRequestAi.configure do |config|</span>
+        <span>  config.openai_api_key = 'YOUR_OPENAI_API_KEY'</span>
+        <span>end</span>
+      </pre>
+    </div>
+
+    <h3 class='mt-40'>Integrations</h3>
+    <p class='mt-10 w-760'>To enable direct creation or updating of Pull Requests this Rails Engine can integrate with GitHub or Bitbucket.</p>
+    <p class='mt-10 w-760'>For GitHub you need to provide a <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token">GitHub Access Token</a>.
+And for Bitbucket you need to provide a <a href="https://bitbucket.org/account/settings/app-passwords/" rel="nofollow">Bitbucket App Password</a> and your Bitbucket Username.</p>
+    
+    <h4 class='mt-40'>GitHub Configuration</h4>
+    <p class='mt-10 w-760'>Using <strong>only</strong> Environment Variable you need to set:</p>
+    <ul class='mt-10'>
+      <li><a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token" rel="nofollow">GITHUB_ACCESS_TOKEN</a></li>
+    </ul>
+    <p class='mt-20'>OR, if you choose to use the initializer:</p>
+    <div class='mt-10'>
+      <pre>
+        <span>PullRequestAi.configure do |config|</span>
+        <span>  config.github_access_token = 'YOUR_GITHUB_ACCESS_TOKEN'</span>
+        <span>end</span>
+      </pre>
+    </div>
+
+    <h4 class='mt-40'>Bitbucket Configuration</h4>
+    <p class='mt-10 w-760'>Using <strong>only</strong> Environment Variable you need to set:</p>
+    <ul class='mt-10'>
+      <li><a href="https://bitbucket.org/account/settings/app-passwords/" rel="nofollow">BITBUCKET_APP_PASSWORD</a></li>
+      <li><a href="https://bitbucket.org/account/settings/" rel="nofollow">BITBUCKET_USERNAME</a></li>
+    </ul>
+    <p class='mt-20'>OR, if you choose to use the initializer:</p>
+    <div class='mt-10'>
+      <pre>
+        <span>PullRequestAi.configure do |config|</span>
+        <span>  config.bitbucket_app_password = 'YOUR_BITBUCKET_APP_PASSWORD'</span>
+        <span>  config.bitbucket_username = 'YOUR_BITBUCKET_USERNAME'</span>
+        <span>end</span>
+      </pre>
+    </div>
+
+  </div>
+
   <div class='flex'>
-    <%= button_tag 'Reload', { id: 'reload-btn', class: "mt-20#{@error_message ? '' : ' hide'}" } %>
+    <%= button_tag 'Reload', { id: 'reload-btn', class: "mt-20#{@error_message && !@misconfigured ? '' : ' hide'}" } %>
     <%= button_tag 'Request Description', { id: 'request-description-btn', class: "mt-20#{@error_message ? ' hide' : ''}" } %>
   </div>
 

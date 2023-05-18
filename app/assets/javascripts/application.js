@@ -81,8 +81,8 @@ requestDescriptionButton.onclick = () => {
     else {
       enableSubmission(data);
     }
-  }).catch(errorMsg => {
-    window.showNotification({ message: errorMsg, theme: "error" });
+  }).catch(error => {
+    window.showNotification({ message: error.message, theme: "error" });
   });
 }
 
@@ -102,8 +102,8 @@ createPullRequestButton.onclick = () => {
   jsonPost('/rrtools/pull_request_ai/create', data).then(data => {
     hideSpinner();
     processData(data, "Pull Request created successfully.");
-  }).catch(errorMsg => {
-    window.showNotification({ message: errorMsg, theme: "error" });
+  }).catch(error => {
+    window.showNotification({ message: error.message, theme: "error" });
   });
 }
 
@@ -114,8 +114,8 @@ updatePullRequestButton.onclick = () => {
   jsonPost('/rrtools/pull_request_ai/update', data).then(data => {
     hideSpinner();
     processData(data, "Pull Request updated successfully.");
-  }).catch(errorMsg => {
-    window.showNotification({ message: errorMsg, theme: "error" });
+  }).catch(error => {
+    window.showNotification({ message: error.message, theme: "error" });
   });
 }
 
