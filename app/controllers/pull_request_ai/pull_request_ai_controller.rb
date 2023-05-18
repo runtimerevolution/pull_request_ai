@@ -7,10 +7,13 @@ module PullRequestAi
     def new
       @types = [['Feature', :feature], ['Release', :release], ['HotFix', :hotfix]]
 
+      @misconfigured = PullRequestAi.openai_api_key.nil? || PullRequestAi.openai_api_key.empty?
+      @error_message = 'Missing the OpenAI API Key.' if @misconfigured
+
       client.destination_branches.fmap do |branches|
-        @branches = branches
+        @branches = branches  
       end.or do |error|
-        @error_message = error.description
+        @error_message ||= error.description
       end
     end
 
